@@ -6,15 +6,44 @@ class VsGame(tk.Frame):
         # Set class attributes
         self.root = root
         self.time_left = 120
+        self.health = 20
+        self.energy = 10
+        self.turn = 1
 
-
+        # Create labels and buttons
         self.pack()
-        self.create_buttons()
-        self.turn_timer()
+        self.set_turn_count()
+        self.display_health()
+        self.display_energy()
+        self.display_attack_button()
+        self.display_improve_button()
+        #self.turn_timer()
 
-    def create_buttons(self):
-        self.title = tk.Label(self.root, text="Welcome to the game!")
+    def set_turn_count(self):
+        self.title = tk.Label(self.root, anchor="nw", text="Turn 1", pady=1, height=1, font="arial 24 bold")
         self.title.pack()
+
+    def display_health(self):
+        self.health_label = tk.Label(self.root, text="Health: " + str(self.health))
+        self.health_label.pack()
+
+    def update_health(self, damage):
+        self.health -= damage
+        self.health_label.config(text="Health: " + str(self.health))
+
+    def display_energy(self):
+        self.energy_label = tk.Label(self.root, text="Energy: " + str(self.energy))
+        self.energy_label.pack()
+
+    def display_attack_button(self):
+        self.attack_button = tk.Button(self.root, text="Attack", command= lambda: self.update_health(1))
+        self.attack_button.pack()
+
+    def display_improve_button(self):
+        self.improve_button = tk.Button(self.root, text="Improve", command= lambda: self.update_health(-1))
+        self.improve_button.pack()
+
+    def set_turn_timer(self):
         self.time_button = tk.Button(self.root, text="Action", width=25, command=self.root.destroy)
         self.timer = tk.Label(self.root)
         self.timer.pack()
