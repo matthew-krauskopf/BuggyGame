@@ -1,12 +1,17 @@
 import tkinter as tk
-from tkinter.ttk import Frame
 
 class VsGame(tk.Frame):
     def __init__(self, root=None):
+        # Keep: don't know reason why
         super().__init__(root)
-        # Set class attributes
+        # Set reference to root
         self.root = root
+        # Name window
         self.master.title("Vul Game")
+        # Restrict size of window
+        self.root.resizable(0,0)
+
+        # Set starting values
         self.time_left = 120
         self.health = 20
         self.enemy_health = 20
@@ -21,48 +26,48 @@ class VsGame(tk.Frame):
 
     def set_layout(self):
         # Layout columns and rows for GUI
-        self.columnconfigure(1, weight=1, minsize=15)
-        self.columnconfigure(2, weight=1, minsize=15)
-        self.columnconfigure(3, pad=10, minsize=15)
-        self.rowconfigure(1)
+        self.columnconfigure(1, minsize=175)
+        self.columnconfigure(2, minsize=175)
+        self.columnconfigure(3)
+        self.rowconfigure(1, )
         self.rowconfigure(2)
         self.rowconfigure(3)
         self.rowconfigure(4)
 
         # Create turn label
-        self.turn_label = tk.Label(self, anchor="nw", text="Turn 1", width=10,
+        self.turn_label = tk.Label(self, anchor="nw", text="Turn 1",
                                height=2, font="arial 24 bold")
-        self.turn_label.grid(row=1, column=1, sticky=tk.W)
+        self.turn_label.grid(row=1, column=1, sticky="w")
 
         # Create health label
         self.health_label = tk.Label(self, text="My Health: " + str(self.health),
-                                      bg="#00e600", width=15)
-        self.health_label.grid(row=2, column=1, sticky=tk.W)
+                                      bg="#00e600", font="arial 14")
+        self.health_label.grid(row=2, column=1, sticky="ew")
 
         # Create enemy health label
         self.enemy_health_label = tk.Label(self, text="Enemy Health: " + str(self.enemy_health),
-                                            width=15, bg="red")
-        self.enemy_health_label.grid(row=2, column=2, sticky=tk.W)
+                                            bg="red", font="arial 14")
+        self.enemy_health_label.grid(row=2, column=2, sticky="ew")
 
         # Create energy label
         self.energy_label = tk.Label(self, text="Energy: " + str(self.energy),
-                                    bg="#33ccff", width=15)
-        self.energy_label.grid(row=3, column=1, sticky=tk.W)
+                                    bg="#33ccff", font="arial 14")
+        self.energy_label.grid(row=3, column=1, sticky="ew")
 
         # Create attack button
-        self.attack_button = tk.Button(self, text="Attack", width=15,
+        self.attack_button = tk.Button(self, text="Attack", font="arial 14",
                                         command= lambda: self.update_enemy_health(1))
-        self.attack_button.grid(row=4, column=1, sticky=tk.W, columnspan=1)
+        self.attack_button.grid(row=4, column=1, sticky="ew", columnspan=1)
 
         # Create improve button
-        self.improve_button = tk.Button(self, text="Improve", width=15,
+        self.improve_button = tk.Button(self, text="Improve", font="arial 14",
                                          command= lambda: self.update_energy(1))
-        self.improve_button.grid(row=4, column=2, sticky=tk.W)
+        self.improve_button.grid(row=4, column=2, sticky="ew")
 
         # Create log window
-        self.log = tk.Text(self, width=50, height=10, padx=20, wrap="word",
+        self.log = tk.Text(self, height=10, wrap="word",
                             yscrollcommand="set", state="disabled")
-        self.log.grid(row=1, column=3, columnspan=1, rowspan=4)
+        self.log.grid(row=1, column=3, columnspan=1, rowspan=4, sticky="ns")
 
     def log_action(self, message):
         # Have to set log state to normal to modify
