@@ -6,69 +6,80 @@ class VsGame(tk.Frame):
         super().__init__(root)
         # Set class attributes
         self.root = root
-        #self.root.geometry("800x100")
+        self.master.title("Vul Game")
         self.time_left = 120
         self.health = 20
         self.enemy_health = 20
         self.energy = 10
-        self.turn = 1
+        self.turn = 0
 
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
+        self.log_action("Game is ready!")
         #self.turn_timer()
 
     def set_layout(self):
-
-        # Set title frame
-        frame1 = Frame(self)
-        frame1.pack(fill=tk.X)
+        # Layout columns and rows for GUI
+        self.columnconfigure(1, weight=1, minsize=15)
+        self.columnconfigure(2, weight=1, minsize=15)
+        self.columnconfigure(3, pad=10, minsize=15)
+        self.rowconfigure(1)
+        self.rowconfigure(2)
+        self.rowconfigure(3)
+        self.rowconfigure(4)
 
         # Create turn label
-        self.turn_label = tk.Label(frame1, anchor="nw", text="Turn 1", width=10,
+        self.turn_label = tk.Label(self, anchor="nw", text="Turn 1", width=10,
                                height=2, font="arial 24 bold")
-        self.turn_label.pack(side=tk.LEFT)
-
-        # Set health frame
-        frame2 = Frame(self)
-        frame2.pack(fill=tk.X)
+        self.turn_label.grid(row=1, column=1, sticky=tk.W)
 
         # Create health label
-        self.health_label = tk.Label(frame2, text="My Health: " + str(self.health),
+        self.health_label = tk.Label(self, text="My Health: " + str(self.health),
                                       bg="#00e600", width=15)
-        self.health_label.pack(side=tk.LEFT)
+        self.health_label.grid(row=2, column=1, sticky=tk.W)
 
         # Create enemy health label
-        self.enemy_health_label = tk.Label(frame2, text="Enemy Health: " + str(self.enemy_health),
+        self.enemy_health_label = tk.Label(self, text="Enemy Health: " + str(self.enemy_health),
                                             width=15, bg="red")
-        self.enemy_health_label.pack(side=tk.LEFT, padx=5)
-
-        # Set energy frame
-        frame3 = Frame(self)
-        frame3.pack(fill=tk.X)
+        self.enemy_health_label.grid(row=2, column=2, sticky=tk.W)
 
         # Create energy label
-        self.energy_label = tk.Label(frame3, text="Energy: " + str(self.energy),
+        self.energy_label = tk.Label(self, text="Energy: " + str(self.energy),
                                     bg="#33ccff", width=15)
-        self.energy_label.pack(side=tk.LEFT)
-
-        # Set action frame
-        frame4 = Frame(self)
-        frame4.pack(fill=tk.X)
+        self.energy_label.grid(row=3, column=1, sticky=tk.W)
 
         # Create attack button
-        self.attack_button = tk.Button(frame4, text="Attack", width=15,
+        self.attack_button = tk.Button(self, text="Attack", width=15,
                                         command= lambda: self.update_enemy_health(1))
-        self.attack_button.pack(side=tk.LEFT)
+        self.attack_button.grid(row=4, column=1, sticky=tk.W, columnspan=1)
 
         # Create improve button
-        self.improve_button = tk.Button(frame4, text="Improve", width=15,
+        self.improve_button = tk.Button(self, text="Improve", width=15,
                                          command= lambda: self.update_energy(1))
-        self.improve_button.pack(side=tk.LEFT)
+        self.improve_button.grid(row=4, column=2, sticky=tk.W)
 
         # Create log window
-        #self.log = tk.Text(self.root)
+        self.log = tk.Text(self, width=50, height=10, padx=20, wrap="word",
+                            yscrollcommand="set", state="disabled")
+        self.log.grid(row=1, column=3, columnspan=1, rowspan=4)
 
+    def log_action(self, message):
+        # Have to set log state to normal to modify
+        self.log.config(state="normal")
+        # Show message without header if game is starting
+        if self.turn == 0:
+            self.log.insert(tk.END, message)
+        # Format to show game output each turn
+        else:
+            self.log.insert(tk.END, "\nTurn " + str(self.turn) + ": " + message)
+        # Disable ability to edit window
+        self.log.config(state="disabled")
+        # Autoscroll to bottom
+        self.log.yview(tk.END)
+        # TODO Move turn counter to action wrapper
+        self.turn += 1
+        self.update_turn()
 
     def set_turn_timer(self):
         self.time_button = tk.Button(self.root, text="Action", width=25, command=self.root.destroy)
@@ -86,18 +97,23 @@ class VsGame(tk.Frame):
     def update_my_health(self, damage):
         self.health -= damage
         self.health_label.config(text="My Health: " + str(self.health))
+        self.log_action("Enemy dealt 1 damage to player!")
 
     def update_enemy_health(self, damage):
         self.enemy_health -= damage
         self.enemy_health_label.config(text="Enemy Health: " + str(self.enemy_health))
+        self.log_action("Player dealt 1 damage to enemy!")
 
     def update_energy(self, energy):
         self.energy -= energy
         self.energy_label.config(text="Energy: " + str(self.energy))
-
+        self.log_action("Player spent energy to improve code!")
         # Disable improve button if out of energy
         if self.energy == 0:
             self.improve_button.config(state="disabled")
+
+    def update_turn(self):
+        self.turn_label.config(text="Turn " + str(self.turn))
 
 
 def SetStartingFiles():
