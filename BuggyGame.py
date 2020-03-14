@@ -10,9 +10,10 @@ class VsGame(tk.Frame):
         self.master.title("Vul Game")
         # Restrict size of window
         self.root.resizable(0,0)
-
+        # Set standard font
+        self.font = "arial 14"
         # Set starting values
-        self.time_left = 120
+        self.time_left = 30
         self.health = 20
         self.enemy_health = 20
         self.energy = 10
@@ -28,11 +29,6 @@ class VsGame(tk.Frame):
         # Layout columns and rows for GUI
         self.columnconfigure(1, minsize=175)
         self.columnconfigure(2, minsize=175)
-        self.columnconfigure(3)
-        self.rowconfigure(1, )
-        self.rowconfigure(2)
-        self.rowconfigure(3)
-        self.rowconfigure(4)
 
         # Create turn label
         self.turn_label = tk.Label(self, anchor="nw", text="Turn 1",
@@ -41,27 +37,27 @@ class VsGame(tk.Frame):
 
         # Create health label
         self.health_label = tk.Label(self, text="My Health: " + str(self.health),
-                                      bg="#00e600", font="arial 14")
+                                      bg="#00e600", font=self.font)
         self.health_label.grid(row=2, column=1, sticky="ew")
 
         # Create enemy health label
         self.enemy_health_label = tk.Label(self, text="Enemy Health: " + str(self.enemy_health),
-                                            bg="red", font="arial 14")
+                                            bg="red", font=self.font)
         self.enemy_health_label.grid(row=2, column=2, sticky="ew")
 
         # Create energy label
         self.energy_label = tk.Label(self, text="Energy: " + str(self.energy),
-                                    bg="#33ccff", font="arial 14")
+                                    bg="#33ccff", font=self.font)
         self.energy_label.grid(row=3, column=1, sticky="ew")
 
         # Create attack button
-        self.attack_button = tk.Button(self, text="Attack", font="arial 14",
-                                        command= lambda: self.update_enemy_health(1))
+        self.attack_button = tk.Button(self, text="Attack", font=self.font,
+                                        command=self.attack_menu)
         self.attack_button.grid(row=4, column=1, sticky="ew", columnspan=1)
 
         # Create improve button
-        self.improve_button = tk.Button(self, text="Improve", font="arial 14",
-                                         command= lambda: self.update_energy(1))
+        self.improve_button = tk.Button(self, text="Improve", font=self.font,
+                                         command=self.improve_menu)
         self.improve_button.grid(row=4, column=2, sticky="ew")
 
         # Create log window
@@ -104,10 +100,11 @@ class VsGame(tk.Frame):
         self.health_label.config(text="My Health: " + str(self.health))
         self.log_action("Enemy dealt 1 damage to player!")
 
-    def update_enemy_health(self, damage):
+    def normal_attack(self, damage):
         self.enemy_health -= damage
         self.enemy_health_label.config(text="Enemy Health: " + str(self.enemy_health))
         self.log_action("Player dealt 1 damage to enemy!")
+        self.sub_atk.destroy()
 
     def update_energy(self, energy):
         self.energy -= energy
@@ -116,10 +113,75 @@ class VsGame(tk.Frame):
         # Disable improve button if out of energy
         if self.energy == 0:
             self.improve_button.config(state="disabled")
+        self.sub_def.destroy()
 
     def update_turn(self):
         self.turn_label.config(text="Turn " + str(self.turn))
 
+    def attack_menu(self):
+
+        # Create attack sub menu
+        self.sub_atk = tk.Toplevel(self.root)
+
+        # Disable master menu to prevent launching multiple windows
+        self.sub_atk.grab_set()
+
+        # Configure rows and columns
+        self.sub_atk.rowconfigure(1, pad=25)
+        self.sub_atk.rowconfigure(2, pad=5)
+        self.sub_atk.rowconfigure(3, pad=5)
+        self.sub_atk.rowconfigure(4, pad=5)
+        self.sub_atk.rowconfigure(5, pad=5)
+
+        self.sub_title = tk.Label(self.sub_atk, text="Select Attack", font="arial 24 bold")
+        # Define attack buttons
+        self.sub_normal_atk = tk.Button(self.sub_atk, text="Normal Attack", font=self.font, width=25,
+                                            command= lambda: self.normal_attack(1), bg="red")
+        self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
+                                            command= lambda: self.log_action("Feature coming soon!"), bg="red")
+        self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy privledges", font=self.font, width=25,
+                                            command= lambda: self.log_action("Feature coming soon!"), bg="red")
+        self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
+                                            command= lambda: self.log_action("Feature coming soon!"), bg="red")
+
+        # Pack attack buttons
+        self.sub_title.grid(row=1, column=1)
+        self.sub_normal_atk.grid(row=2, column=1)
+        self.sub_spy.grid(row=3, column=1)
+        self.sub_change_priv.grid(row=4, column=1)
+        self.sub_DoS.grid(row=5, column=1)
+
+    def improve_menu(self):
+
+        # Create attack sub menu
+        self.sub_def = tk.Toplevel(self.root)
+        # Disable master menu to prevent launching multiple windows
+        self.sub_def.grab_set()
+
+        # Configure rows and columns
+        self.sub_def.rowconfigure(1, pad=25)
+        self.sub_def.rowconfigure(2, pad=5)
+        self.sub_def.rowconfigure(3, pad=5)
+        self.sub_def.rowconfigure(4, pad=5)
+        self.sub_def.rowconfigure(5, pad=5)
+
+        self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold")
+        # Define attack buttons
+        self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
+                                            command= lambda: self.update_energy(1), bg="#33ccff")
+        self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
+                                            command= lambda: self.log_action("Feature coming soon!"), bg="#33ccff")
+        self.sub_def_priv_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
+                                            command= lambda: self.log_action("Feature coming soon!"), bg="#33ccff")
+        self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
+                                            command= lambda: self.log_action("Feature coming soon!"), bg="#33ccff")
+
+        # Pack attack buttons
+        self.sub_title.grid(row=1, column=1)
+        self.sub_impv_energy.grid(row=2, column=1)
+        self.sub_def_spy.grid(row=3, column=1)
+        self.sub_def_priv_priv.grid(row=4, column=1)
+        self.sub_def_DoS.grid(row=5, column=1)
 
 def SetStartingFiles():
     # Set starting files for game. Copy all files from StartFiles into InUseFiles
