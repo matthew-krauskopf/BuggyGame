@@ -17,12 +17,12 @@ class VsGame(tk.Frame):
         self.health = 20
         self.enemy_health = 20
         self.energy = 10
-        self.turn = 0
+        self.turn = 1
 
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
-        self.log_action("Game is ready!")
+        self.log_action("Game is ready!", False)
         #self.turn_timer()
 
     def set_layout(self):
@@ -65,22 +65,19 @@ class VsGame(tk.Frame):
                             yscrollcommand="set", state="disabled")
         self.log.grid(row=1, column=3, columnspan=1, rowspan=4, sticky="ns")
 
-    def log_action(self, message):
+    def log_action(self, message, next_turn=True):
         # Have to set log state to normal to modify
         self.log.config(state="normal")
         # Show message without header if game is starting
-        if self.turn == 0:
-            self.log.insert(tk.END, message)
+        if not next_turn:
+            self.log.insert(tk.END, message + "\n")
         # Format to show game output each turn
         else:
-            self.log.insert(tk.END, "\nTurn " + str(self.turn) + ": " + message)
+            self.log.insert(tk.END, "Turn " + str(self.turn) + ": " + message + "\n")
         # Disable ability to edit window
         self.log.config(state="disabled")
         # Autoscroll to bottom
         self.log.yview(tk.END)
-        # TODO Move turn counter to action wrapper
-        self.turn += 1
-        self.update_turn()
 
     def set_turn_timer(self):
         self.time_button = tk.Button(self.root, text="Action", width=25, command=self.root.destroy)
@@ -105,6 +102,7 @@ class VsGame(tk.Frame):
         self.enemy_health_label.config(text="Enemy Health: " + str(self.enemy_health))
         self.log_action("Player dealt 1 damage to enemy!")
         self.sub_atk.destroy()
+        self.update_turn()
 
     def update_energy(self, energy):
         self.energy -= energy
@@ -114,12 +112,13 @@ class VsGame(tk.Frame):
         if self.energy == 0:
             self.improve_button.config(state="disabled")
         self.sub_def.destroy()
+        self.update_turn()
 
     def update_turn(self):
+        self.turn += 1
         self.turn_label.config(text="Turn " + str(self.turn))
 
     def attack_menu(self):
-
         # Create attack sub menu
         self.sub_atk = tk.Toplevel(self.root)
 
@@ -133,16 +132,17 @@ class VsGame(tk.Frame):
         self.sub_atk.rowconfigure(4, pad=5)
         self.sub_atk.rowconfigure(5, pad=5)
 
-        self.sub_title = tk.Label(self.sub_atk, text="Select Attack", font="arial 24 bold")
+        # Create label for new menu
+        self.sub_title = tk.Label(self.sub_atk, text="Select Attack", font="arial 24 bold", width=20)
         # Define attack buttons
         self.sub_normal_atk = tk.Button(self.sub_atk, text="Normal Attack", font=self.font, width=25,
                                             command= lambda: self.normal_attack(1), bg="red")
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!"), bg="red")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="red")
         self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy privledges", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!"), bg="red")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!"), bg="red")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="red")
 
         # Pack attack buttons
         self.sub_title.grid(row=1, column=1)
@@ -152,7 +152,6 @@ class VsGame(tk.Frame):
         self.sub_DoS.grid(row=5, column=1)
 
     def improve_menu(self):
-
         # Create attack sub menu
         self.sub_def = tk.Toplevel(self.root)
         # Disable master menu to prevent launching multiple windows
@@ -165,16 +164,17 @@ class VsGame(tk.Frame):
         self.sub_def.rowconfigure(4, pad=5)
         self.sub_def.rowconfigure(5, pad=5)
 
-        self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold")
+        # Create label for new menu
+        self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold", width=20)
         # Define attack buttons
         self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
                                             command= lambda: self.update_energy(1), bg="#33ccff")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!"), bg="#33ccff")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_priv_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!"), bg="#33ccff")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!"), bg="#33ccff")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
 
         # Pack attack buttons
         self.sub_title.grid(row=1, column=1)
@@ -211,7 +211,5 @@ def main():
     root = tk.Tk()
     gui = VsGame(root)
     gui.mainloop()
-
-    #print("Hello world!")
 
 main()
