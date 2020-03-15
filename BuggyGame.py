@@ -1,7 +1,18 @@
 from VsGUI import *
+import random
+import string
+
+def CreateKeywords():
+    # Set keyword in private file to enable bonus damage
+    key_file = open("PrivateFiles/keywords.txt", "w")
+    # From string of 12 random lowercase characters
+    keyword = ''.join(random.choice(string.ascii_lowercase) for z in range(12))
+    key_file.write(keyword)
+    key_file.close()
 
 def SetStartingFiles():
     # Set starting files for game. Copy all files from StartFiles into InUseFiles
+    CreateKeywords()
     return
 
 def Connect():
