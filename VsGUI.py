@@ -19,6 +19,7 @@ class VsGame(tk.Frame):
         self.energy = 10
         self.turn = 1
 
+
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
@@ -68,12 +69,21 @@ class VsGame(tk.Frame):
     def log_action(self, message, next_turn=True):
         # Have to set log state to normal to modify
         self.log.config(state="normal")
-        # Show message without header if game is starting
-        if not next_turn:
-            self.log.insert(tk.END, message + "\n")
-        # Format to show game output each turn
-        else:
-            self.log.insert(tk.END, "Turn " + str(self.turn) + ": " + message + "\n")
+        # Try catch for logging. Will error if privledges have been changed
+        try:
+            log_file = open("PublicFiles/LogFile.txt", "a")
+            # Show message without header if game is starting
+            if not next_turn:
+                # Update log file in PublicFiles
+                log_file.write(message+"\n")
+                self.log.insert(tk.END, message + "\n")
+            # Format to show game output each turn
+            else:
+                log_file.write("Turn " + str(self.turn) + ": " + message+"\n")
+                self.log.insert(tk.END, "Turn " + str(self.turn) + ": " + message + "\n")
+            log_file.close()
+        except:
+            self.log.insert(tk.END, "Error! Cannot access log file. Reading privledges may have been abused\n")
         # Disable ability to edit window
         self.log.config(state="disabled")
         # Autoscroll to bottom
