@@ -1,4 +1,6 @@
 import tkinter as tk
+from Attacks import *
+from Improvements import *
 
 class VsGame(tk.Frame):
     def __init__(self, root=None):
@@ -16,9 +18,18 @@ class VsGame(tk.Frame):
         self.time_left = 30
         self.health = 20
         self.enemy_health = 20
-        self.energy = 10
+        self.energy = 100
         self.turn = 1
-
+        # Set energy costs for attacks
+        self.attack_energy = 1
+        self.spy_energy = 3
+        self.change_priv_energy = 5
+        self.DoS_energy = 10
+        # Set energy costs for improvements
+        self.patch_spy_energy = 5
+        self.patch_priv_energy = 10
+        self.patch_DoS_energy = 20
+        self.repair_log_energy = 3
 
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
@@ -117,12 +128,9 @@ class VsGame(tk.Frame):
     def update_energy(self, energy):
         self.energy -= energy
         self.energy_label.config(text="Energy: " + str(self.energy))
-        self.log_action("Player spent energy to improve code!")
         # Disable improve button if out of energy
         if self.energy == 0:
             self.improve_button.config(state="disabled")
-        self.sub_def.destroy()
-        self.update_turn()
 
     def update_turn(self):
         self.turn += 1
@@ -149,10 +157,24 @@ class VsGame(tk.Frame):
                                             command= lambda: self.normal_attack(1), bg="red")
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="red")
-        self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy privledges", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="red")
+        self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
+                                            command= lambda: change_permissions(self), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="red")
+
+        # Configure button states if enough energy is present
+        # Normal attack energy
+        if self.energy < self.attack_energy:
+            self.sub_normal_atk.configure(state="disabled")
+        # Spy energy
+        if self.energy < self.spy_energy:
+            self.sub_spy.configure(state="disabled")
+        # Change privledge energy
+        if self.energy < self.change_priv_energy:
+            self.sub_change_priv.configure(state="disabled")
+        # DoS energy
+        if self.energy < self.DoS_energy:
+            self.sub_DoS.configure(state="disabled")
 
         # Pack attack buttons
         self.sub_title.grid(row=1, column=1)
@@ -181,14 +203,31 @@ class VsGame(tk.Frame):
                                             command= lambda: self.update_energy(1), bg="#33ccff")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
-        self.sub_def_priv_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
+        self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
+        self.sub_def_repair_log = tk.Button(self.sub_def, text="Repair logging output", font=self.font, width=25,
+                                            command= lambda: repair_logging(self), bg="#33ccff")
+
+        # Configure button states if enough energy is present
+        # Patch Spy energy
+        if self.energy < self.patch_spy_energy:
+            self.sub_def_spy.configure(state="disabled")
+        # Change privledge energy
+        if self.energy < self.patch_priv_energy:
+            self.sub_def_priv.configure(state="disabled")
+        # DoS energy
+        if self.energy < self.patch_DoS_energy:
+            self.sub_def_DoS.configure(state="disabled")
+        # Repair log energy. Also disable if file is writable already
+        if self.energy < self.repair_log_energy or check_write():
+            self.sub_def_repair_log.configure(state="disabled")
 
         # Pack attack buttons
         self.sub_title.grid(row=1, column=1)
         self.sub_impv_energy.grid(row=2, column=1)
         self.sub_def_spy.grid(row=3, column=1)
-        self.sub_def_priv_priv.grid(row=4, column=1)
+        self.sub_def_priv.grid(row=4, column=1)
         self.sub_def_DoS.grid(row=5, column=1)
+        self.sub_def_repair_log.grid(row=6, column=1)

@@ -15,7 +15,7 @@ def SetStartingFiles():
     # Set starting files for game. Copy all files from StartFiles into InUseFiles
     CreateKeywords()
     # Set permissions of log file to ensure it is writable
-    subprocess.call(["chmod", "644", "PublicFiles/LogFile.txt"])
+    subprocess.call(["chmod", "664", "PublicFiles/LogFile.txt"])
     # Open and close log file in write mode to clear it
     log_file = open("PublicFiles/LogFile.txt", "w")
     log_file.close()
