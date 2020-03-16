@@ -36,8 +36,10 @@ class VsGame(tk.Frame):
         self.patch_priv_energy = 10
         self.patch_DoS_energy = 20
         self.repair_log_energy = 3
+        self.reset_keyword_energy = 10
         # Set patching flags to emulate code patches
         self.permission_patch = False
+        self.spy_patch = False
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
@@ -168,7 +170,7 @@ class VsGame(tk.Frame):
         self.sub_normal_atk = tk.Button(self.sub_atk, text="Normal Attack", font=self.font, width=25,
                                             command= lambda: self.normal_attack(1), bg="red")
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="red")
+                                            command= lambda: peak_files(self, "../PrivateFiles/keywords.txt"), bg="red")
         self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
                                             command= lambda: attack_permissions(self, self.CurID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
@@ -207,6 +209,7 @@ class VsGame(tk.Frame):
         self.sub_def.rowconfigure(3, pad=5)
         self.sub_def.rowconfigure(4, pad=5)
         self.sub_def.rowconfigure(5, pad=5)
+        self.sub_def.rowconfigure(6, pad=5)
 
         # Create label for new menu
         self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold", width=20)
@@ -214,13 +217,15 @@ class VsGame(tk.Frame):
         self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
                                             command= lambda: self.update_energy(1), bg="#33ccff")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
+                                            command= lambda: prevent_file_leakage(self), bg="#33ccff")
         self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
                                             command= lambda: prevent_log_lockout(self), bg="#33ccff")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_repair_log = tk.Button(self.sub_def, text="Repair logging output", font=self.font, width=25,
                                             command= lambda: repair_logging(self), bg="#33ccff")
+        self.sub_def_reset_keyword = tk.Button(self.sub_def, text="Reset keyword", font=self.font, width=25,
+                                            command= lambda: reset_keyword(self), bg="#33ccff")
 
         # Configure button states if enough energy is present
         # Patch Spy energy
@@ -235,6 +240,9 @@ class VsGame(tk.Frame):
         # Repair log energy. Also disable if file is writable already
         if self.energy < self.repair_log_energy or check_write():
             self.sub_def_repair_log.configure(state="disabled")
+        # Reset Keyword energy
+        if self.energy < self.reset_keyword_energy:
+            self.sub_def_reset_keyword.configure(state="disabled")
 
         # Pack attack buttons
         self.sub_title.grid(row=1, column=1)
@@ -243,3 +251,4 @@ class VsGame(tk.Frame):
         self.sub_def_priv.grid(row=4, column=1)
         self.sub_def_DoS.grid(row=5, column=1)
         self.sub_def_repair_log.grid(row=6, column=1)
+        self.sub_def_reset_keyword.grid(row=7, column=1)

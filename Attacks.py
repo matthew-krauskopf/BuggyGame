@@ -13,3 +13,14 @@ def attack_permissions(GUI, foe_ID):
     GUI.update_energy(GUI.change_priv_energy)
     # Close attack window
     GUI.sub_atk.destroy()
+
+def peak_files(GUI, wanted_file):
+    # Grab content of file
+    content = read_file(GUI, wanted_file)
+    GUI.log_action("Content of " + wanted_file + ": \n" + content)
+    # Update turn count
+    GUI.update_turn()
+    # Update energy
+    GUI.update_energy(GUI.spy_energy)
+    # Close attack window
+    GUI.sub_atk.destroy()
