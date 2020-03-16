@@ -1,8 +1,9 @@
 import subprocess
+from Utils import *
 
 def repair_logging(GUI):
-    # Change write permissions on enemy log file to prevent victim from seeing log
-    subprocess.call(["chmod", "u+w", "PublicFiles/LogFile.txt"])
+    # Restore write permission on log file
+    change_permissions("u+w", GUI.ID, GUI.ID, GUI.permission_patch)
     GUI.log_action("Repaired logging!")
     # Update turn count
     GUI.update_turn()
@@ -12,8 +13,15 @@ def repair_logging(GUI):
     GUI.sub_def.destroy()
 
 def prevent_log_lockout(GUI):
-    # Change settings so that log file permissions cannot be changed by enemy
-    pass
+    # Set flag that permissions have been patched
+    GUI.permission_patch = True
+    GUI.log_action("Patch successful: Will now check for requester ID")
+    # Update turn
+    GUI.update_turn()
+    # Update energy
+    GUI.update_energy(GUI.patch_priv_energy)
+    # Close improvement window
+    GUI.sub_def.destroy()
 
 def check_write():
     # Check write permission of log file

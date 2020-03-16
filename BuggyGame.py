@@ -1,7 +1,7 @@
 from VsGUI import *
 import random
 import string
-import subprocess
+from Utils import *
 
 def CreateKeywords():
     # Set keyword in private file to enable bonus damage
@@ -15,11 +15,14 @@ def SetStartingFiles():
     # Set starting files for game. Copy all files from StartFiles into InUseFiles
     CreateKeywords()
     # Set permissions of log file to ensure it is writable
-    subprocess.call(["chmod", "664", "PublicFiles/LogFile.txt"])
+    change_permissions("664", patch=False)
     # Open and close log file in write mode to clear it
     log_file = open("PublicFiles/LogFile.txt", "w")
     log_file.close()
     return
+
+def GenerateUserID():
+    return "".join(random.choice(string.ascii_lowercase) for z in range(10))
 
 def Connect():
     # Connect 2 instances of game and return connection object
@@ -40,10 +43,11 @@ def PlayGame():
 def main():
     # Sets up game and connects players
     SetStartingFiles()
+    UserID = GenerateUserID()
     Connect()
     PlayGame()
     root = tk.Tk()
-    gui = VsGame(root)
+    gui = VsGame(root, UserID)
     gui.mainloop()
 
 main()

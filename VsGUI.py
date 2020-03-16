@@ -3,7 +3,7 @@ from Attacks import *
 from Improvements import *
 
 class VsGame(tk.Frame):
-    def __init__(self, root=None):
+    def __init__(self, root=None, UserID=None):
         # Keep: don't know reason why
         super().__init__(root)
         # Set reference to root
@@ -12,12 +12,18 @@ class VsGame(tk.Frame):
         self.master.title("Vul Game")
         # Restrict size of window
         self.root.resizable(0,0)
+        # Set User ID
+        self.ID = UserID
+        # Set temp foe ID
+        self.FoeID = "adfasdfeaf"
+        self.CurID = self.ID
         # Set standard font
         self.font = "arial 14"
         # Set starting values
         self.time_left = 30
         self.health = 20
         self.enemy_health = 20
+        # TODO set better value
         self.energy = 100
         self.turn = 1
         # Set energy costs for attacks
@@ -30,7 +36,8 @@ class VsGame(tk.Frame):
         self.patch_priv_energy = 10
         self.patch_DoS_energy = 20
         self.repair_log_energy = 3
-
+        # Set patching flags to emulate code patches
+        self.permission_patch = False
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
@@ -135,6 +142,11 @@ class VsGame(tk.Frame):
     def update_turn(self):
         self.turn += 1
         self.turn_label.config(text="Turn " + str(self.turn))
+        # Simulate changing turn to foe
+        if self.turn % 2 == 0:
+            self.CurID = self.ID
+        else:
+            self.CurID = self.FoeID
 
     def attack_menu(self):
         # Create attack sub menu
@@ -158,7 +170,7 @@ class VsGame(tk.Frame):
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="red")
         self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
-                                            command= lambda: change_permissions(self), bg="red")
+                                            command= lambda: attack_permissions(self, self.CurID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="red")
 
@@ -204,7 +216,7 @@ class VsGame(tk.Frame):
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
+                                            command= lambda: prevent_log_lockout(self), bg="#33ccff")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_repair_log = tk.Button(self.sub_def, text="Repair logging output", font=self.font, width=25,

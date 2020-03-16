@@ -1,9 +1,12 @@
-import subprocess
+from Utils import *
 
-def change_permissions(GUI):
+def attack_permissions(GUI, foe_ID):
     # Change write permissions on enemy log file to prevent victim from seeing log
-    subprocess.call(["chmod", "u-w", "PublicFiles/LogFile.txt"])
-    GUI.log_action("Disabled enemy log file!")
+    if change_permissions("u-w", foe_ID, GUI.ID, GUI.permission_patch):
+        GUI.log_action("Disabled enemy log file!")
+    # Report failure if log file permissions patched
+    else:
+        GUI.log_action("Attack failed! Could not disable enemy log file")
     # Update turn count
     GUI.update_turn()
     # Update energy
