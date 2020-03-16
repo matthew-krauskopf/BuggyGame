@@ -1,30 +1,39 @@
 from VsGUI import *
 from Utils import *
+from Network import *
 
-def Connect():
-    # Connect 2 instances of game and return connection object
-    return
+import sys
 
-def TakeTurn():
-    # Take action. Waits for user input
-    return
+def Connect(HoC, port):
+    if HoC and port:
+        if HoC == "host":
+            host(port)
+        else:
+            client(port)
+        exit()
+    else:
+        return None
 
-def WaitTurn():
-    # Wait for opponent to act. Listens for signal
-    return
+def GetRuntimeArgs():
+    # Grab port and if host or client
+    if len(sys.argv) > 3 or len(sys.argv) == 2:
+        print("Invalid usage!\n py BuggyGame.py [host/client] [port]")
+        exit()
+    # No internet connect: debug against self
+    elif len(sys.argv) == 1:
+        return None, None
+    # Host/client, port
+    else:
+        return sys.argv[1], int(sys.argv[2])
 
-def PlayGame():
-    # Main flow of game.
-    return
 
 def main():
     # Sets up game and connects players
     SetStartingFiles()
     UserID = GenerateUserID()
-    Connect()
-    PlayGame()
+    HoC, port = GetRuntimeArgs()
     root = tk.Tk()
-    gui = VsGame(root, UserID)
+    gui = VsGame(root, UserID, Connect(HoC, port))
     gui.mainloop()
 
 main()

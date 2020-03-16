@@ -3,11 +3,12 @@ from Attacks import *
 from Improvements import *
 
 class VsGame(tk.Frame):
-    def __init__(self, root=None, UserID=None):
+    def __init__(self, root=None, UserID=None, socket=None):
         # Keep: don't know reason why
         super().__init__(root)
         # Set reference to root
         self.root = root
+        self.socket = socket
         # Name window
         self.master.title("Vul Game")
         # Restrict size of window
