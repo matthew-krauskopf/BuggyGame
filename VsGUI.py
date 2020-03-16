@@ -127,13 +127,6 @@ class VsGame(tk.Frame):
         self.health_label.config(text="My Health: " + str(self.health))
         self.log_action("Enemy dealt 1 damage to player!")
 
-    def normal_attack(self, damage):
-        self.enemy_health -= damage
-        self.enemy_health_label.config(text="Enemy Health: " + str(self.enemy_health))
-        self.log_action("Player dealt 1 damage to enemy!")
-        self.sub_atk.destroy()
-        self.update_turn()
-
     def update_energy(self, energy):
         self.energy -= energy
         self.energy_label.config(text="Energy: " + str(self.energy))
@@ -151,6 +144,34 @@ class VsGame(tk.Frame):
             self.CurID = self.FoeID
 
     def attack_menu(self):
+
+        def attack_input_menu(title):
+            # Create attack input sub menu
+            self.attack_input = tk.Toplevel(self.root)
+
+            # Disable master menu to prevent launching multiple windows
+            self.attack_input.grab_set()
+
+            # Configure rows and columns
+            self.attack_input.rowconfigure(1, pad=25)
+            self.attack_input.rowconfigure(2, pad=5)
+
+            # Create label for new menu
+            self.attack_input_label = tk.Label(self.attack_input, text=title, font="arial 24 bold", width=20)
+            self.input_field = tk.Entry(self.attack_input, width=25, font=self.font)
+            # Submit button for spying on files. Input must be provided
+            if title == "Select File":
+                self.submit = tk.Button(self.attack_input, text="Submit", font=self.font, width=15,
+                                                command= lambda: peak_files(self, self.input_field.get()), bg="gray")
+            # Submit button for standard attack. Leave blank if no keyword
+            elif title.startswith("Use bonus keyword?"):
+                self.submit = tk.Button(self.attack_input, text="Submit", font=self.font, width=15,
+                                                command= lambda: normal_attack(self, self.input_field.get()), bg="gray")
+            # Pack widgets
+            self.attack_input_label.grid(row=1, column=1)
+            self.input_field.grid(row=2, column=1)
+            self.submit.grid(row=3, column=1)
+
         # Create attack sub menu
         self.sub_atk = tk.Toplevel(self.root)
 
@@ -168,9 +189,9 @@ class VsGame(tk.Frame):
         self.sub_title = tk.Label(self.sub_atk, text="Select Attack", font="arial 24 bold", width=20)
         # Define attack buttons
         self.sub_normal_atk = tk.Button(self.sub_atk, text="Normal Attack", font=self.font, width=25,
-                                            command= lambda: self.normal_attack(1), bg="red")
+                                            command= lambda: attack_input_menu("Use bonus keyword? \n(Leave blank if no)"), bg="red")
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
-                                            command= lambda: peak_files(self, "../PrivateFiles/keywords.txt"), bg="red")
+                                            command= lambda: attack_input_menu("Select File"), bg="red")
         self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
                                             command= lambda: attack_permissions(self, self.CurID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
@@ -215,7 +236,7 @@ class VsGame(tk.Frame):
         self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold", width=20)
         # Define attack buttons
         self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
-                                            command= lambda: self.update_energy(1), bg="#33ccff")
+                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
                                             command= lambda: prevent_file_leakage(self), bg="#33ccff")
         self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,

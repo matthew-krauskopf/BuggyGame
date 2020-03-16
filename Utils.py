@@ -20,21 +20,21 @@ def read_file(GUI, target_file):
     def get_lines():
         # Check if file exists
         try:
-            f = open(file_prefix+target_file)
-            lines = "".join("--> "+line.strip()+"\n" for line in f.readlines())
+            f = open(target_file)
+            lines = f.readlines()
+            f.close()
             return lines
         # Return error if file not found
         except:
-            return "Error! File not found"
+            return ["Error! File not found"]
 
-    file_prefix = "PublicFiles/"
     # Read any file given. Vulnerable to "../" file path
     if not GUI.spy_patch:
         return get_lines()
     # Patch is applied: cannot request file path with "../"
     else:
         if ".." in target_file:
-            return "File peak failed! Not able to look at files outside of " + file_prefix
+            return ["File peak failed! Not able to look at files outside of PublicFiles/"]
         else:
             return get_lines()
 
