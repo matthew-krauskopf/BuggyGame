@@ -1,4 +1,3 @@
-import subprocess
 from Utils import *
 
 def repair_logging(GUI):
