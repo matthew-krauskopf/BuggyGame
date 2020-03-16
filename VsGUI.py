@@ -26,17 +26,18 @@ class VsGame(tk.Frame):
         # TODO set better value
         self.energy = 100
         self.turn = 1
+        self.gain_energy = 1
         # Set energy costs for attacks
         self.attack_energy = 1
         self.spy_energy = 3
         self.change_priv_energy = 5
         self.DoS_energy = 10
         # Set energy costs for improvements
-        self.patch_spy_energy = 5
-        self.patch_priv_energy = 10
-        self.patch_DoS_energy = 20
-        self.repair_log_energy = 3
-        self.reset_keyword_energy = 10
+        self.patch_spy_cost = 5
+        self.patch_priv_cost = 10
+        self.patch_DoS_cost = 20
+        self.repair_log_cost = 3
+        self.reset_keyword_cost = 10
         # Set patching flags to emulate code patches
         self.permission_patch = False
         self.spy_patch = False
@@ -140,6 +141,8 @@ class VsGame(tk.Frame):
         # Simulate changing turn to foe
         if self.turn % 2 == 0:
             self.CurID = self.ID
+            # Replenish energy with new turn
+            self.energy += self.gain_energy
         else:
             self.CurID = self.FoeID
 
@@ -236,7 +239,7 @@ class VsGame(tk.Frame):
         self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold", width=20)
         # Define attack buttons
         self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
+                                            command= lambda: improve_energy_gains(self), bg="#33ccff")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
                                             command= lambda: prevent_file_leakage(self), bg="#33ccff")
         self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
@@ -250,19 +253,19 @@ class VsGame(tk.Frame):
 
         # Configure button states if enough energy is present
         # Patch Spy energy
-        if self.energy < self.patch_spy_energy:
+        if self.energy < self.patch_spy_cost:
             self.sub_def_spy.configure(state="disabled")
         # Change privledge energy
-        if self.energy < self.patch_priv_energy:
+        if self.energy < self.patch_priv_cost:
             self.sub_def_priv.configure(state="disabled")
         # DoS energy
-        if self.energy < self.patch_DoS_energy:
+        if self.energy < self.patch_DoS_cost:
             self.sub_def_DoS.configure(state="disabled")
         # Repair log energy. Also disable if file is writable already
-        if self.energy < self.repair_log_energy or check_write():
+        if self.energy < self.repair_log_cost or check_write():
             self.sub_def_repair_log.configure(state="disabled")
         # Reset Keyword energy
-        if self.energy < self.reset_keyword_energy:
+        if self.energy < self.reset_keyword_cost:
             self.sub_def_reset_keyword.configure(state="disabled")
 
         # Pack attack buttons

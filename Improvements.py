@@ -1,5 +1,16 @@
 from Utils import *
 
+def improve_energy_gains(GUI):
+    # Improve energy gained each turn
+    GUI.gain_energy += 1
+    GUI.log_action("Turnly energy gain increased from " + str(GUI.gain_energy-1) + " to " + str(GUI.gain_energy))
+    # Update turn count
+    GUI.update_turn()
+    # Update energy. Cost is double what previous gain was
+    GUI.update_energy((GUI.gain_energy-1)*2)
+    # Close improvement window
+    GUI.sub_def.destroy()
+
 def repair_logging(GUI):
     # Restore write permission on log file
     change_permissions("u+w", GUI.ID, GUI.ID, GUI.permission_patch)
@@ -7,7 +18,7 @@ def repair_logging(GUI):
     # Update turn count
     GUI.update_turn()
     # Update energy
-    GUI.update_energy(GUI.change_priv_energy)
+    GUI.update_energy(GUI.change_priv_cost)
     # Close improvement window
     GUI.sub_def.destroy()
 
@@ -18,7 +29,7 @@ def reset_keyword(GUI):
     # Update turn
     GUI.update_turn()
     # Update energy
-    GUI.update_energy(GUI.reset_keyword_energy)
+    GUI.update_energy(GUI.reset_keyword_cost)
     # Close improvement window
     GUI.sub_def.destroy()
 
@@ -29,7 +40,7 @@ def prevent_log_lockout(GUI):
     # Update turn
     GUI.update_turn()
     # Update energy
-    GUI.update_energy(GUI.patch_priv_energy)
+    GUI.update_energy(GUI.patch_priv_cost)
     # Close improvement window
     GUI.sub_def.destroy()
 
@@ -39,7 +50,7 @@ def prevent_file_leakage(GUI):
     # Update turn
     GUI.update_turn()
     # Update energy
-    GUI.update_energy(GUI.patch_spy_energy)
+    GUI.update_energy(GUI.patch_spy_cost)
     # Close improvement window
     GUI.sub_def.destroy()
 
