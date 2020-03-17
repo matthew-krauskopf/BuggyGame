@@ -36,7 +36,7 @@ def normal_attack(GUI, input_keyword, outgoing=True):
         GUI.health -= damage
         # Update health label
         GUI.health_label.config(text="My Health: " + str(GUI.health))
-        # Report damage dealth
+        # Report damage dealt
         GUI.log_action("Enemy dealt " + str(damage) + " damage to Player!")
         # Update turn count
         GUI.update_turn()
@@ -102,6 +102,9 @@ def peak_files(GUI, wanted_file, outgoing=True):
         # Send info to attacker
         send_action(GUI.conn, content)
         # Report data breach (?)
-        GUI.log_action("Enemy studied your log file!")
+        if GUI.spy_patch and ".." in wanted_file:
+            GUI.log_action("Enemy was prevented from reading illegal file!")
+        else:
+            GUI.log_action("Enemy studied your log file!")
         # Update turn count
         GUI.update_turn()

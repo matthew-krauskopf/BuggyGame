@@ -306,3 +306,8 @@ class VsGame(tk.Frame):
         # Change write permissions
         elif segments[0] == "Chmod":
             attack_permissions(self, segments[1], False)
+        # Opponent improved their system
+        else:
+            self.log_action("Enemy spent energy to improve system")
+            # Update turn count
+            self.update_turn()
