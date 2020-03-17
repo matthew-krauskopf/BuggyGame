@@ -1,7 +1,7 @@
 from VsGUI import *
 from Utils import *
 from Network import *
-import sys
+from sys import argv
 
 def Connect(is_host, port):
     # Connect host and client
@@ -15,15 +15,15 @@ def Connect(is_host, port):
 
 def GetRuntimeArgs():
     # Grab port and if host or client
-    if len(sys.argv) > 3 or len(sys.argv) == 2:
+    if len(argv) > 3 or len(argv) == 2:
         print("Invalid usage!\n py BuggyGame.py [host/client] [port]")
         exit()
     # No internet connect: debug against self
-    elif len(sys.argv) == 1:
+    elif len(argv) == 1:
         return None, None
     # Host/client, port
     else:
-        return sys.argv[1] == "host", int(sys.argv[2])
+        return argv[1] == "host", int(argv[2])
 
 def PlayGame(gui):
     # Flow for enemy turn
