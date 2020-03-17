@@ -9,8 +9,8 @@ def improve_energy_gains(GUI):
     GUI.log_action("Turnly energy gain increased from " + str(GUI.gain_energy-1) + " to " + str(GUI.gain_energy))
     # Update turn count
     GUI.update_turn()
-    # Update energy. Cost is double what previous gain was
-    GUI.update_energy((GUI.gain_energy-1)*2)
+    # Update energy. Cost whatever is currently gained each turn
+    GUI.update_energy(GUI.gain_energy)
     # Close improvement window
     GUI.sub_def.destroy()
 

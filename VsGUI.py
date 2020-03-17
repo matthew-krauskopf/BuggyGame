@@ -26,7 +26,7 @@ class VsGame(tk.Frame):
         self.health = 20
         self.enemy_health = 20
         # TODO set better value
-        self.energy = 100
+        self.energy = 9
         self.turn = 0
         self.gain_energy = 1
         # Set energy costs for attacks
@@ -48,8 +48,6 @@ class VsGame(tk.Frame):
         self.set_layout()
         self.log_action("Game is ready!", False)
         self.update_turn()
-        #self.turn_timer()
-
 
     def set_layout(self):
         # Layout columns and rows for GUI
@@ -114,24 +112,6 @@ class VsGame(tk.Frame):
         # Autoscroll to bottom
         self.log.yview(tk.END)
 
-    def set_turn_timer(self):
-        self.time_button = tk.Button(self.root, text="Action", width=25, command=self.root.destroy)
-        self.timer = tk.Label(self.root)
-        self.timer.pack()
-        self.time_button.pack()
-
-    def turn_timer(self):
-        def count():
-            self.time_left -= 1
-            self.timer.config(text=str(self.time_left))
-            self.timer.after(1000, count)
-        count()
-
-    def update_my_health(self, damage):
-        self.health -= damage
-        self.health_label.config(text="My Health: " + str(self.health))
-        self.log_action("Enemy dealt 1 damage to player!")
-
     def update_energy(self, energy):
         self.energy -= energy
         self.energy_label.config(text="Energy: " + str(self.energy))
@@ -141,24 +121,36 @@ class VsGame(tk.Frame):
 
     def new_turn_energy(self):
         self.energy += self.gain_energy
+        self.energy_label.config(text="Energy: " + str(self.energy))
 
     def update_turn(self):
+        # Set settings for enemy turn
+        def enemy_turn():
+            # Disable action buttons
+            self.attack_button.config(state="disabled")
+            self.improve_button.config(state="disabled")
+            self.turn_label.config(text="Turn " + str(self.turn) + "\nEnemy's turn")
+
+        def player_turn():
+            # Enable action buttons
+            self.new_turn_energy()
+            self.attack_button.config(state="normal")
+            self.improve_button.config(state="normal")
+            self.turn_label.config(text="Turn " + str(self.turn) + "\nYour turn")
+
+        # Increase turn counter
         self.turn += 1
+        # Alternate turns
         if self.turn % 2 == 0:
             if self.is_host:
-                self.new_turn_energy()
-                whose = "Enemy's"
+                enemy_turn()
             else:
-                # Give energy for start of new turn
-                whose = "Your"
+                player_turn()
         else:
             if self.is_host:
-                # Give energy for start of new turn
-                whose = "Your"
+                player_turn()
             else:
-                self.new_turn_energy()
-                whose = "Enemy's"
-        self.turn_label.config(text="Turn " + str(self.turn) + "\n" + whose + " turn")
+                enemy_turn()
 
     def attack_menu(self):
 

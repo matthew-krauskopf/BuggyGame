@@ -1,7 +1,6 @@
 from VsGUI import *
 from Utils import *
 from Network import *
-
 import sys
 
 def Connect(is_host, port):
@@ -27,35 +26,38 @@ def GetRuntimeArgs():
         return sys.argv[1] == "host", int(sys.argv[2])
 
 def PlayGame(gui):
+    # Flow for enemy turn
+    def enemy_turn():
+        # Get action and interpret what to do
+        action = recv_action(gui)
+        gui.interpret_action(action)
+        # Update GUI
+        gui.update_idletasks()
+        gui.update()
+
+    def player_turn():
+        gui.update_idletasks()
+        gui.update()
+
     # Launch application for both
-    gui.update_idletasks()
-    gui.update()
+    player_turn()
     while gui.health > 0 or gui.enemy_health > 0:
         # Host goes on odd turn, guest on even turns
         if gui.turn % 2 == 0:
             if gui.is_host:
                 # I am host, Opponent's turn
                 # Get action and interpret what to do
-                action = recv_action(gui)
-                gui.interpret_action(action)
-                # Update GUI
-                gui.update_idletasks()
-                gui.update()
+                enemy_turn()
             else:
                 # I am guest, my turn
-                gui.update_idletasks()
-                gui.update()
+                player_turn()
         else:
             if gui.is_host:
                 # I am host, my turn
-                gui.update_idletasks()
-                gui.update()
+                player_turn()
             else:
                 # I am guest, opponent's turn
-                action = recv_action(gui)
-                gui.interpret_action(action)
-                gui.update_idletasks()
-                gui.update()
+                enemy_turn()
 
 def main():
     # Sets up game and connects players
@@ -65,6 +67,5 @@ def main():
     root = tk.Tk()
     gui = VsGame(root, UserID, Connect(is_host, port), is_host)
     PlayGame(gui)
-    #gui.mainloop()
 
 main()
