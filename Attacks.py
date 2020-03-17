@@ -7,7 +7,7 @@ def normal_attack(GUI, input_keyword, outgoing=True):
         # Send attack to opponent
         send_action(GUI.conn, "Normal " + input_keyword)
         # Receive damage dealt successfully
-        damage = int(recv_action(GUI.conn))
+        damage = int(recv_action(GUI))
         # Subtract health from opponent
         GUI.enemy_health -= damage
         # Update health label

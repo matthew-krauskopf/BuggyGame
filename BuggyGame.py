@@ -36,7 +36,7 @@ def PlayGame(gui):
             if gui.is_host:
                 # I am host, Opponent's turn
                 # Get action and interpret what to do
-                action = recv_action(gui.conn)
+                action = recv_action(gui)
                 gui.interpret_action(action)
                 # Update GUI
                 gui.update_idletasks()
@@ -52,7 +52,7 @@ def PlayGame(gui):
                 gui.update()
             else:
                 # I am guest, opponent's turn
-                action = recv_action(gui.conn)
+                action = recv_action(gui)
                 gui.interpret_action(action)
                 gui.update_idletasks()
                 gui.update()
