@@ -1,6 +1,7 @@
 import subprocess
 import random
 import string
+import os
 
 def change_permissions(perm, request_ID=None, host_ID=None, patch=None):
     if not patch:
@@ -52,8 +53,14 @@ def GenerateUserID():
 def SetStartingFiles():
     # Set starting files for game. Copy all files from StartFiles into InUseFiles
     CreateKeyword()
+    # Create folders if not present
+    if not os.path.exists('PublicFiles/'):
+        os.makedirs('PublicFiles/')
+    if not os.path.exists('PrivateFiles/'):
+        os.makedirs('PrivateFiles/')
     # Set permissions of log file to ensure it is writable
-    change_permissions("664", patch=False)
+    if os.path.exists("PublicFiles/LogFile.txt"):
+        change_permissions("664", patch=False)
     # Open and close log file in write mode to clear it
     log_file = open("PublicFiles/LogFile.txt", "w")
     log_file.close()
