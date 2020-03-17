@@ -3,6 +3,7 @@ from Network import send_action, recv_action
 
 def normal_attack(GUI, input_keyword, outgoing=True):
     damage = 1
+    # Attacker
     if outgoing:
         # Send attack to opponent
         send_action(GUI.conn, "Normal " + input_keyword)
@@ -22,7 +23,7 @@ def normal_attack(GUI, input_keyword, outgoing=True):
         # Update turn count
         GUI.update_turn()
     else:
-        damage = 1
+        # Victim
         if input_keyword != "":
             # Do standard damange to enemy. Bonus damage if keyword is used.
             keyword = read_file(GUI, "PrivateFiles/keywords.txt")[0]
@@ -54,20 +55,35 @@ def attack_permissions(GUI, foe_ID):
     # Close attack window
     GUI.sub_atk.destroy()
 
-def peak_files(GUI, wanted_file):
-    if wanted_file == "":
-        return
-    # Set default target folder as PublicFiles/
-    file_prefix = "PublicFiles/"
-    # Grab content of file
-    lines = read_file(GUI, file_prefix+wanted_file)
-    # Format file lines
-    content = "".join("--> "+line.strip()+"\n" for line in lines)
-    GUI.log_action("Content of " + wanted_file + ": \n" + content)
-    # Update turn count
-    GUI.update_turn()
-    # Update energy
-    GUI.update_energy(GUI.spy_energy)
-    # Close attack windows
-    GUI.sub_atk.destroy()
-    GUI.attack_input.destroy()
+def peak_files(GUI, wanted_file, outgoing=True):
+    # Attacker
+    if outgoing:
+        if wanted_file == "":
+            return
+        # Send attack to opponent
+        send_action(GUI.conn, "Spy " + wanted_file)
+        # Wait for response
+        info = recv_action(GUI)
+        # Display info in log window
+        GUI.log_action("Content of " + wanted_file + ": \n" + info)
+        # Update turn count
+        GUI.update_turn()
+        # Update energy
+        GUI.update_energy(GUI.spy_energy)
+        # Close attack windows
+        GUI.sub_atk.destroy()
+        GUI.attack_input.destroy()
+    # Victim
+    else:
+        # Set default target folder as PublicFiles/
+        file_prefix = "PublicFiles/"
+        # Grab content of file
+        lines = read_file(GUI, file_prefix+wanted_file)
+        # Format file lines
+        content = "".join("--> "+line.strip()+"\n" for line in lines)
+        # Send info to attacker
+        send_action(GUI.conn, content)
+        # Report data breach (?)
+        GUI.log_action("Enemy studied your log file!")
+        # Update turn count
+        GUI.update_turn()

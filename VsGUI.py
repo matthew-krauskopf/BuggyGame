@@ -300,3 +300,7 @@ class VsGame(tk.Frame):
                 normal_attack(self, segments[1], False)
             else:
                 normal_attack(self, "", False)
+        # Spy on file
+        elif message.startswith("Spy"):
+            segments = message.split()
+            peak_files(self, segments[1], False)
