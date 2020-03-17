@@ -1,23 +1,24 @@
 import tkinter as tk
 from Attacks import *
 from Improvements import *
+from Network import send_action, recv_action
 
 class VsGame(tk.Frame):
-    def __init__(self, root=None, UserID=None, socket=None):
+    def __init__(self, root=None, UserID=None, conn=None, is_host=True):
         # Keep: don't know reason why
         super().__init__(root)
         # Set reference to root
         self.root = root
-        self.socket = socket
+        # Set reference to socket
+        self.conn = conn
+        # Mark if host or client
+        self.is_host = is_host
         # Name window
         self.master.title("Vul Game")
         # Restrict size of window
         self.root.resizable(0,0)
         # Set User ID
         self.ID = UserID
-        # Set temp foe ID
-        self.FoeID = "adfasdfeaf"
-        self.CurID = self.ID
         # Set standard font
         self.font = "arial 14"
         # Set starting values
@@ -26,7 +27,7 @@ class VsGame(tk.Frame):
         self.enemy_health = 20
         # TODO set better value
         self.energy = 100
-        self.turn = 1
+        self.turn = 0
         self.gain_energy = 1
         # Set energy costs for attacks
         self.attack_energy = 1
@@ -46,7 +47,9 @@ class VsGame(tk.Frame):
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
         self.log_action("Game is ready!", False)
+        self.update_turn()
         #self.turn_timer()
+
 
     def set_layout(self):
         # Layout columns and rows for GUI
@@ -136,16 +139,26 @@ class VsGame(tk.Frame):
         if self.energy == 0:
             self.improve_button.config(state="disabled")
 
+    def new_turn_energy(self):
+        self.energy += self.gain_energy
+
     def update_turn(self):
         self.turn += 1
-        self.turn_label.config(text="Turn " + str(self.turn))
-        # Simulate changing turn to foe
         if self.turn % 2 == 0:
-            self.CurID = self.ID
-            # Replenish energy with new turn
-            self.energy += self.gain_energy
+            if self.is_host:
+                self.new_turn_energy()
+                whose = "Enemy's"
+            else:
+                # Give energy for start of new turn
+                whose = "Your"
         else:
-            self.CurID = self.FoeID
+            if self.is_host:
+                # Give energy for start of new turn
+                whose = "Your"
+            else:
+                self.new_turn_energy()
+                whose = "Enemy's"
+        self.turn_label.config(text="Turn " + str(self.turn) + "\n" + whose + " turn")
 
     def attack_menu(self):
 
@@ -197,7 +210,7 @@ class VsGame(tk.Frame):
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
                                             command= lambda: attack_input_menu("Select File"), bg="red")
         self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
-                                            command= lambda: attack_permissions(self, self.CurID), bg="red")
+                                            command= lambda: attack_permissions(self, self.ID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
                                             command= lambda: self.log_action("Feature coming soon!", False), bg="red")
 
@@ -277,3 +290,13 @@ class VsGame(tk.Frame):
         self.sub_def_DoS.grid(row=5, column=1)
         self.sub_def_repair_log.grid(row=6, column=1)
         self.sub_def_reset_keyword.grid(row=7, column=1)
+
+
+    def interpret_action(self, message):
+        # Normal attack
+        if message.startswith("Normal"):
+            segments = message.split()
+            if len(segments) == 2:
+                normal_attack(self, segments[1], False)
+            else:
+                normal_attack(self, "", False)

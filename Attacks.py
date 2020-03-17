@@ -1,26 +1,44 @@
 from Utils import *
+from Network import send_action, recv_action
 
-def normal_attack(GUI, input_keyword):
+def normal_attack(GUI, input_keyword, outgoing=True):
     damage = 1
-    if input_keyword != "":
-        # Do standard damange to enemy. Bonus damage if keyword is used.
-        keyword = read_file(GUI, "PrivateFiles/keywords.txt")[0]
-        # Check if input keyword matches stored keyword
-        if input_keyword == keyword:
-            damage = 5
-    # Subtract health from opponent
-    GUI.enemy_health -= damage
-    # Update health label
-    GUI.enemy_health_label.config(text="Enemy Health: " + str(GUI.enemy_health))
-    # Report damage dealth
-    GUI.log_action("Player dealt " + str(damage) + " damage to enemy!")
-    # Update energy
-    GUI.update_energy(GUI.attack_energy)
-    # Update turn count
-    GUI.update_turn()
-    # Destory attack menus
-    GUI.sub_atk.destroy()
-    GUI.attack_input.destroy()
+    if outgoing:
+        # Send attack to opponent
+        send_action(GUI.conn, "Normal " + input_keyword)
+        # Receive damage dealt successfully
+        damage = int(recv_action(GUI.conn))
+        # Subtract health from opponent
+        GUI.enemy_health -= damage
+        # Update health label
+        GUI.enemy_health_label.config(text="Enemy Health: " + str(GUI.enemy_health))
+        # Report damage dealth
+        GUI.log_action("Player dealt " + str(damage) + " damage to enemy!")
+        # Update energy
+        GUI.update_energy(GUI.attack_energy)
+        # Destory attack menus
+        GUI.sub_atk.destroy()
+        GUI.attack_input.destroy()
+        # Update turn count
+        GUI.update_turn()
+    else:
+        damage = 1
+        if input_keyword != "":
+            # Do standard damange to enemy. Bonus damage if keyword is used.
+            keyword = read_file(GUI, "PrivateFiles/keywords.txt")[0]
+            # Check if input keyword matches stored keyword
+            if input_keyword == keyword:
+                damage = 5
+        # Send damage dealt back to attacker
+        send_action(GUI.conn, str(damage))
+        # Subtract health from self
+        GUI.health -= damage
+        # Update health label
+        GUI.health_label.config(text="My Health: " + str(GUI.health))
+        # Report damage dealth
+        GUI.log_action("Enemy dealt " + str(damage) + " damage to Player!")
+        # Update turn count
+        GUI.update_turn()
 
 def attack_permissions(GUI, foe_ID):
     # Change write permissions on enemy log file to prevent victim from seeing log
