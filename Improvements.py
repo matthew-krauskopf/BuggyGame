@@ -73,3 +73,11 @@ def check_write():
         return True
     except:
         return False
+
+def skip_turn(GUI):
+    # Tell opponent improvements were made
+    send_action(GUI.conn, "None")
+    # Update turn
+    GUI.update_turn()
+    # Close improvement window
+    GUI.sub_def.destroy()
