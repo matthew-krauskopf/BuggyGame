@@ -40,9 +40,9 @@ def read_file(GUI, target_file):
 
 def CreateKeyword():
     # Set keyword in private file to enable bonus damage
-    key_file = open("PrivateFiles/keywords.txt", "w")
-    # From string of 12 random lowercase characters
-    keyword = ''.join(random.choice(string.ascii_lowercase) for z in range(12))
+    key_file = open("PrivateFiles/keyword.txt", "w")
+    # Form string of 5 random lowercase characters
+    keyword = ''.join(random.choice(string.ascii_lowercase) for z in range(5))
     key_file.write(keyword)
     key_file.close()
 

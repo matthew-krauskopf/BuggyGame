@@ -26,7 +26,7 @@ def normal_attack(GUI, input_keyword, outgoing=True):
         # Victim
         if input_keyword != "":
             # Do standard damange to enemy. Bonus damage if keyword is used.
-            keyword = read_file(GUI, "PrivateFiles/keywords.txt")[0]
+            keyword = read_file(GUI, "PrivateFiles/keyword.txt")[0]
             # Check if input keyword matches stored keyword
             if input_keyword == keyword:
                 damage = 5
