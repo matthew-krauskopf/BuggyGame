@@ -46,7 +46,6 @@ def PlayGame(gui):
         if gui.turn % 2 == 0:
             if gui.is_host:
                 # I am host, Opponent's turn
-                # Get action and interpret what to do
                 enemy_turn()
             else:
                 # I am guest, my turn

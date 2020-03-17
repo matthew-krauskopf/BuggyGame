@@ -2,7 +2,6 @@ import socket
 import errno
 HOST = '127.0.0.1'  # The server's hostname or IP address
 
-
 def host(port):
     # Establish socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,7 +24,6 @@ def client(port):
 
 def send_action(conn, action):
     conn.send(bytearray(action, "utf-8"))
-
 
 def recv_action(gui):
     # Stay in loop until message is received

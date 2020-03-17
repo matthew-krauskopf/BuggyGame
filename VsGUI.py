@@ -1,7 +1,6 @@
 import tkinter as tk
 from Attacks import *
 from Improvements import *
-from Network import send_action, recv_action
 
 class VsGame(tk.Frame):
     def __init__(self, root=None, UserID=None, conn=None, is_host=True):
@@ -51,8 +50,8 @@ class VsGame(tk.Frame):
 
     def set_layout(self):
         # Layout columns and rows for GUI
-        self.columnconfigure(1, minsize=175)
-        self.columnconfigure(2, minsize=175)
+        self.columnconfigure(1, minsize=225)
+        self.columnconfigure(2, minsize=225)
 
         # Create turn label
         self.turn_label = tk.Label(self, anchor="nw", text="Turn 1",
