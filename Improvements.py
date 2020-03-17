@@ -10,7 +10,7 @@ def improve_energy_gains(GUI):
     # Update turn count
     GUI.update_turn()
     # Update energy. Cost whatever is currently gained each turn
-    GUI.update_energy(GUI.gain_energy)
+    GUI.update_energy(GUI.gain_energy-1)
     # Close improvement window
     GUI.sub_def.destroy()
 
