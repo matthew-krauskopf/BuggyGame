@@ -41,19 +41,37 @@ def normal_attack(GUI, input_keyword, outgoing=True):
         # Update turn count
         GUI.update_turn()
 
-def attack_permissions(GUI, foe_ID):
-    # Change write permissions on enemy log file to prevent victim from seeing log
-    if change_permissions("u-w", foe_ID, GUI.ID, GUI.permission_patch):
-        GUI.log_action("Disabled enemy log file!")
-    # Report failure if log file permissions patched
+def attack_permissions(GUI, request_ID, outgoing=True):
+    # Attacker
+    if outgoing:
+        # Send attack to opponent
+        send_action(GUI.conn, "Chmod " + str(GUI.ID))
+        # Wait for response
+        info = recv_action(GUI)
+        if info == "Success":
+            GUI.log_action("Player disabled enemy log file!")
+        else:
+            GUI.log_action("Attack failed! Could not disable enemy log file")
+        # Update turn count
+        GUI.update_turn()
+        # Update energy
+        GUI.update_energy(GUI.change_priv_energy)
+        # Close attack window
+        GUI.sub_atk.destroy()
+    # Victim
     else:
-        GUI.log_action("Attack failed! Could not disable enemy log file")
-    # Update turn count
-    GUI.update_turn()
-    # Update energy
-    GUI.update_energy(GUI.change_priv_energy)
-    # Close attack window
-    GUI.sub_atk.destroy()
+        # Remove write permissions on log file to prevent victim from seeing log
+        if change_permissions("u-w", request_ID, GUI.ID, GUI.permission_patch):
+            # Send success
+            send_action(GUI.conn, "Success")
+            GUI.log_action("Enemy changed log file permissions!")
+        # Report failure if log file permissions patched
+        else:
+            send_action(GUI.conn, "Failure")
+            GUI.log_action("Enemy failed to disable log file!")
+        # Update turn count
+        GUI.update_turn()
+
 
 def peak_files(GUI, wanted_file, outgoing=True):
     # Attacker

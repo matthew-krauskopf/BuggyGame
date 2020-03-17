@@ -294,13 +294,15 @@ class VsGame(tk.Frame):
 
     def interpret_action(self, message):
         # Normal attack
-        if message.startswith("Normal"):
-            segments = message.split()
+        segments = message.split()
+        if segments[0] == "Normal":
             if len(segments) == 2:
                 normal_attack(self, segments[1], False)
             else:
                 normal_attack(self, "", False)
         # Spy on file
-        elif message.startswith("Spy"):
-            segments = message.split()
+        elif segments[0] == "Spy":
             peak_files(self, segments[1], False)
+        # Change write permissions
+        elif segments[0] == "Chmod":
+            attack_permissions(self, segments[1], False)
