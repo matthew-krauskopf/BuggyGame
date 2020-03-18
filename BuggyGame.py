@@ -3,27 +3,29 @@ from Utils import *
 from Network import *
 from sys import argv
 
-def Connect(is_host, port):
+def Connect(is_host, port, ip):
     # Connect host and client
     if port:
         if is_host:
-            return host(port)
+            return host(port, ip)
         else:
-            return client(port)
+            return client(port, ip)
     else:
         return None
 
 def GetRuntimeArgs():
     # Grab port and if host or client
-    if len(argv) > 3 or len(argv) == 2:
-        print("Invalid usage!\n py BuggyGame.py [host/client] [port]")
-        exit()
-    # No internet connect: debug against self
-    elif len(argv) == 1:
-        return True, None
-    # Host/client, port
+    # Debug call
+    if len(argv) == 1:
+        # Is host, no port, localhost
+        return True, None, "127.0.0.1"
+    elif len(argv) == 4:
+        # Return host/client, port, and IP address
+        return argv[1] == "host", int(argv[2]), argv[3]
+    # Invalid usage
     else:
-        return argv[1] == "host", int(argv[2])
+        print("Invalid usage!\npy BuggyGame.py [host/client] [port] [ip_address]")
+        exit()
 
 def update_game(gui):
     # Update screen
@@ -77,9 +79,9 @@ def main():
     # Sets up game and connects players
     SetStartingFiles()
     UserID = GenerateUserID()
-    is_host, port = GetRuntimeArgs()
+    is_host, port, enemy_ip = GetRuntimeArgs()
     root = tk.Tk()
-    gui = VsGame(root, UserID, Connect(is_host, port), is_host)
+    gui = VsGame(root, UserID, Connect(is_host, port, enemy_ip), is_host)
     PlayGame(gui)
 
 main()

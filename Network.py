@@ -1,11 +1,12 @@
 import socket
 HOST = '127.0.0.1'  # The server's hostname or IP address
 
-def host(port):
+def host(port, ip):
     # Establish socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Turn off blocking sends
-    s.bind((HOST, port))
+    print(ip)
+    s.bind((ip, port))
     # Listen to for client
     s.listen()
     conn, addr = s.accept()
@@ -13,10 +14,10 @@ def host(port):
     print('Connection Successful')
     return conn
 
-def client(port):
+def client(port, ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Turn off blocking sends
-    s.connect((HOST, port))
+    s.connect((ip, port))
     print('Connection Successful')
     s.setblocking(False)
     return s
