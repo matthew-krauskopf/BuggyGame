@@ -17,6 +17,8 @@ class VsGame(tk.Frame):
         self.master.title("Vul Game")
         # Restrict size of window
         self.root.resizable(0,0)
+        # Handle exiting program gracefully
+        self.root.protocol("WM_DELETE_WINDOW", self.on_quit)
         # Set User ID
         self.ID = UserID
         # Set standard font
@@ -53,6 +55,14 @@ class VsGame(tk.Frame):
         # Track request ID's in stack. Each value must be unique
         self.request_IDs = []
         self.update_turn()
+
+    def on_quit(self):
+        # Exit program gracefully
+        # Check if conn exists before trying to close
+        if self.conn:
+            self.conn.close()
+        # Destroy the root
+        self.root.destroy()
 
     def set_layout(self):
         # Layout columns and rows for GUI

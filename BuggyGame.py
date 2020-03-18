@@ -25,6 +25,15 @@ def GetRuntimeArgs():
     else:
         return argv[1] == "host", int(argv[2])
 
+def update_game(gui):
+    # Update screen
+    try:
+        gui.update_idletasks()
+        gui.update()
+    # Root has been destroyed: exit program
+    except:
+        exit()
+
 def PlayGame(gui):
     # Flow for enemy turn
     def enemy_turn():
@@ -33,14 +42,12 @@ def PlayGame(gui):
         # Execute action received from enemy
         gui.execute_queued_action()
         # Update GUI
-        gui.update_idletasks()
-        gui.update()
+        update_game(gui)
 
     def player_turn():
         if gui.stack != []:
             gui.execute_queued_action()
-        gui.update_idletasks()
-        gui.update()
+        update_game(gui)
 
     # Launch application for both
     player_turn()
@@ -64,11 +71,7 @@ def PlayGame(gui):
     gui.end_game()
     # Do busy work until user closes app
     while True:
-        gui.mainloop()
-
-def on_quit():
-    # Exits program gracefully
-    exit()
+        update_game(gui)
 
 def main():
     # Sets up game and connects players
@@ -76,8 +79,6 @@ def main():
     UserID = GenerateUserID()
     is_host, port = GetRuntimeArgs()
     root = tk.Tk()
-    # Handle exiting program gracefully
-    root.protocol("WM_DELETE_WINDOW", on_quit)
     gui = VsGame(root, UserID, Connect(is_host, port), is_host)
     PlayGame(gui)
 
