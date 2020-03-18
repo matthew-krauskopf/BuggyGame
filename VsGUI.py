@@ -62,7 +62,7 @@ class VsGame(tk.Frame):
         # Create turn label
         self.turn_label = tk.Label(self, anchor="nw", text="Turn 1",
                                height=2, font="arial 24 bold")
-        self.turn_label.grid(row=1, column=1, sticky="w")
+        self.turn_label.grid(row=1, column=1, columnspan=2)
 
         # Create health label
         self.health_label = tk.Label(self, text="My Health: " + str(self.health),
@@ -268,17 +268,17 @@ class VsGame(tk.Frame):
         self.sub_def_cost_title = tk.Label(self.sub_def, text="Energy\nCosts", font="arial 20 bold", width=6)
         # Define attack buttons
         self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
-                                            command= lambda: improve_energy_gains(self), bg="#33ccff")
+                                            command= lambda: improve_energy_gains(self), bg="#00e600")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
-                                            command= lambda: prevent_file_leakage(self), bg="#33ccff")
+                                            command= lambda: prevent_file_leakage(self), bg="#00e600")
         self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
-                                            command= lambda: prevent_log_lockout(self), bg="#33ccff")
+                                            command= lambda: prevent_log_lockout(self), bg="#00e600")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
-                                            command= lambda: prevent_DoS(self), bg="#33ccff")
+                                            command= lambda: prevent_DoS(self), bg="#00e600")
         self.sub_def_repair_log = tk.Button(self.sub_def, text="Repair logging output", font=self.font, width=25,
-                                            command= lambda: repair_logging(self), bg="#33ccff")
+                                            command= lambda: repair_logging(self), bg="#00e600")
         self.sub_def_reset_keyword = tk.Button(self.sub_def, text="Reset keyword", font=self.font, width=25,
-                                            command= lambda: reset_keyword(self), bg="#33ccff")
+                                            command= lambda: reset_keyword(self), bg="#00e600")
 
         # Labels for the cost of each action
         self.sub_impv_energy_cost = tk.Label(self.sub_def, text=str(self.gain_energy), font=self.font, width=6, bg="#33ccff")
