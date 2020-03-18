@@ -1,5 +1,5 @@
 from Utils import *
-from Network import send_action, recv_action
+from Network import send_action, send_message, recv_message
 
 def normal_attack(GUI, input_keyword, outgoing=True):
     damage = 1
@@ -7,8 +7,10 @@ def normal_attack(GUI, input_keyword, outgoing=True):
     if outgoing:
         # Send attack to opponent
         send_action(GUI.conn, "Normal " + input_keyword)
+        # Send "Done" message
+        send_action(GUI.conn, "Done")
         # Receive damage dealt successfully
-        damage = int(recv_action(GUI))
+        damage = int(recv_message(GUI))
         # Subtract health from opponent
         GUI.enemy_health -= damage
         # Update health label
@@ -31,7 +33,7 @@ def normal_attack(GUI, input_keyword, outgoing=True):
             if input_keyword == keyword:
                 damage = 5
         # Send damage dealt back to attacker
-        send_action(GUI.conn, str(damage))
+        send_message(GUI.conn, str(damage))
         # Subtract health from self
         GUI.health -= damage
         # Update health label
@@ -46,8 +48,10 @@ def attack_permissions(GUI, request_ID, outgoing=True):
     if outgoing:
         # Send attack to opponent
         send_action(GUI.conn, "Chmod " + str(GUI.ID))
+        # Send "Done" message
+        send_action(GUI.conn, "Done")
         # Wait for response
-        info = recv_action(GUI)
+        info = recv_message(GUI)
         if info == "Success":
             GUI.log_action("Player disabled enemy log file!")
         else:
@@ -63,11 +67,11 @@ def attack_permissions(GUI, request_ID, outgoing=True):
         # Remove write permissions on log file to prevent victim from seeing log
         if change_permissions("u-w", request_ID, GUI.ID, GUI.permission_patch):
             # Send success
-            send_action(GUI.conn, "Success")
+            send_message(GUI.conn, "Success")
             GUI.log_action("Enemy changed log file permissions!")
         # Report failure if log file permissions patched
         else:
-            send_action(GUI.conn, "Failure")
+            send_message(GUI.conn, "Failure")
             GUI.log_action("Enemy failed to disable log file!")
         # Update turn count
         GUI.update_turn()
@@ -80,8 +84,10 @@ def peak_files(GUI, wanted_file, outgoing=True):
             return
         # Send attack to opponent
         send_action(GUI.conn, "Spy " + wanted_file)
+        # Send "Done" message
+        send_action(GUI.conn, "Done")
         # Wait for response
-        info = recv_action(GUI)
+        info = recv_message(GUI)
         # Display info in log window
         GUI.log_action("Content of " + wanted_file + ": \n" + info)
         # Update turn count
@@ -100,7 +106,7 @@ def peak_files(GUI, wanted_file, outgoing=True):
         # Format file lines
         content = "".join("--> "+line.strip()+"\n" for line in lines)
         # Send info to attacker
-        send_action(GUI.conn, content)
+        send_message(GUI.conn, content)
         # Report data breach (?)
         if GUI.spy_patch and ".." in wanted_file:
             GUI.log_action("Enemy was prevented from reading illegal file!")
@@ -108,3 +114,20 @@ def peak_files(GUI, wanted_file, outgoing=True):
             GUI.log_action("Enemy studied your log file!")
         # Update turn count
         GUI.update_turn()
+
+def DoS(GUI):
+    # Flood enemy with 3 "skip turn" requests
+    for z in range(3):
+        send_action(GUI.conn, "Skip " + GUI.ID)
+    # Tell enemy this was a DoS
+    send_action(GUI.conn, "DoS")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
+     # Display info in log window
+    GUI.log_action("Opponent has been DoS'd!")
+    # Update turn count
+    GUI.update_turn()
+    # Update energy
+    GUI.update_energy(GUI.DoS_energy)
+    # Close attack windows
+    GUI.sub_atk.destroy()

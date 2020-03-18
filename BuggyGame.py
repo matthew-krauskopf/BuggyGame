@@ -28,14 +28,17 @@ def GetRuntimeArgs():
 def PlayGame(gui):
     # Flow for enemy turn
     def enemy_turn():
-        # Get action and interpret what to do
-        action = recv_action(gui)
-        gui.interpret_action(action)
+        # Get action
+        recv_action(gui)
+        # Execute action received from enemy
+        gui.execute_queued_action()
         # Update GUI
         gui.update_idletasks()
         gui.update()
 
     def player_turn():
+        if gui.stack != []:
+            gui.execute_queued_action()
         gui.update_idletasks()
         gui.update()
 

@@ -4,6 +4,8 @@ from Network import send_action
 def improve_energy_gains(GUI):
     # Tell opponent improvements were made
     send_action(GUI.conn, "Improve")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
     # Improve energy gained each turn
     GUI.gain_energy += 1
     GUI.log_action("Turnly energy gain increased from " + str(GUI.gain_energy-1) + " to " + str(GUI.gain_energy))
@@ -17,6 +19,8 @@ def improve_energy_gains(GUI):
 def repair_logging(GUI):
     # Tell opponent improvements were made
     send_action(GUI.conn, "Improve")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
     # Restore write permission on log file
     change_permissions("u+w", GUI.ID, GUI.ID, GUI.permission_patch)
     GUI.log_action("Repaired logging!")
@@ -30,6 +34,8 @@ def repair_logging(GUI):
 def reset_keyword(GUI):
     # Tell opponent improvements were made
     send_action(GUI.conn, "Improve")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
     # Reset keyword to mitigate potential leakage
     CreateKeyword()
     GUI.log_action("Keyword successfully reset")
@@ -43,6 +49,8 @@ def reset_keyword(GUI):
 def prevent_log_lockout(GUI):
     # Tell opponent improvements were made
     send_action(GUI.conn, "Improve")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
     # Set flag that permissions have been patched
     GUI.permission_patch = True
     GUI.log_action("Patch successful: Will now check for requester ID")
@@ -56,6 +64,9 @@ def prevent_log_lockout(GUI):
 def prevent_file_leakage(GUI):
     # Tell opponent improvements were made
     send_action(GUI.conn, "Improve")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
+    # Set spy patch flag
     GUI.spy_patch = True
     GUI.log_action("Patch successful: Files outside of PublicFiles can no longer be seen")
     # Update turn
@@ -76,8 +87,12 @@ def check_write():
 
 def skip_turn(GUI):
     # Tell opponent improvements were made
-    send_action(GUI.conn, "None")
+    send_action(GUI.conn, "Skip")
+    # Send "Done" message
+    send_action(GUI.conn, "Done")
+    # Log action
+    GUI.log_action("Took no action...")
     # Update turn
     GUI.update_turn()
     # Close improvement window
-    GUI.sub_def.destroy()
+    #GUI.sub_def.destroy()

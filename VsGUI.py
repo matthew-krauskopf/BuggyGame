@@ -46,6 +46,8 @@ class VsGame(tk.Frame):
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
         self.log_action("Game is ready!", False)
+        # Create action stack. Vulnerable to DoS
+        self.stack = []
         self.update_turn()
 
     def set_layout(self):
@@ -125,6 +127,7 @@ class VsGame(tk.Frame):
     def update_turn(self):
         # Set settings for enemy turn
         def enemy_turn():
+            print(str(self.turn) + " Enemy turn")
             # Disable action buttons
             self.attack_button.config(state="disabled")
             self.improve_button.config(state="disabled")
@@ -132,6 +135,7 @@ class VsGame(tk.Frame):
 
         def player_turn():
             # Enable action buttons
+            print(str(self.turn) + " My turn!")
             self.new_turn_energy()
             self.attack_button.config(state="normal")
             self.improve_button.config(state="normal")
@@ -203,7 +207,7 @@ class VsGame(tk.Frame):
         self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
                                             command= lambda: attack_permissions(self, self.ID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="red")
+                                            command= lambda: DoS(self), bg="red")
 
         # Configure button states if enough energy is present
         # Normal attack energy
@@ -297,9 +301,21 @@ class VsGame(tk.Frame):
         # Change write permissions
         elif segments[0] == "Chmod":
             attack_permissions(self, segments[1], False)
+        elif segments[0] == "DoS":
+            self.log_action("Enemy hit you with DoS attack!")
+            # Update turn count
+            self.update_turn()
         # Skipped turn or was DoS'd
-        elif segments[0] == "None":
-            self.log_action("Enemy took no action")
+        elif segments[0] == "Skip":
+            if segments[1] != self.ID:
+                self.log_action("Unable to take action")
+                # Send "skip" message
+                send_action(self.conn, "Skip " + segments[1])
+                # Send "Done" message
+                send_action(self.conn, "Done")
+            else:
+                # Opponent did not act: do nothing
+                self.log_action("No action was taken")
             # Update turn count
             self.update_turn()
         # Opponent improved their system
@@ -307,3 +323,10 @@ class VsGame(tk.Frame):
             self.log_action("Enemy spent energy to improve system")
             # Update turn count
             self.update_turn()
+
+    def execute_queued_action(self):
+        # Grab action from queue
+        action = self.stack.pop()
+        print("Popping action " + action)
+        # Execute action
+        self.interpret_action(action)
