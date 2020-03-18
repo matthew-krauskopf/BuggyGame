@@ -26,9 +26,9 @@ def send_action(gui, action):
     # Use $ as a message terminator
     gui.conn.send(bytearray(action+"#"+gui.ID+"$", "utf-8"))
 
-def send_message(conn, message):
+def send_message(gui, message):
     # Sending only a single message
-    conn.send(bytearray(message, "utf-8"))
+    gui.conn.send(bytearray(message, "utf-8"))
 
 def recv_message(gui):
     # Stay in loop until message is received

@@ -33,7 +33,7 @@ def normal_attack(GUI, input_keyword, outgoing=True):
             if input_keyword == keyword:
                 damage = 5
         # Send damage dealt back to attacker
-        send_message(GUI.conn, str(damage))
+        send_message(GUI, str(damage))
         # Subtract health from self
         GUI.health -= damage
         # Update health label
@@ -83,7 +83,7 @@ def peak_files(GUI, wanted_file, outgoing=True):
         if wanted_file == "":
             return
         # Send attack to opponent
-        send_action(GUI, "Spy ")
+        send_action(GUI, "Spy " + wanted_file)
         # Send "Done" message
         send_action(GUI, "Done")
         # Wait for response
@@ -106,7 +106,7 @@ def peak_files(GUI, wanted_file, outgoing=True):
         # Format file lines
         content = "".join("--> "+line.strip()+"\n" for line in lines)
         # Send info to attacker
-        send_message(GUI.conn, content)
+        send_message(GUI, content)
         # Report data breach (?)
         if GUI.spy_patch and ".." in wanted_file:
             GUI.log_action("Enemy was prevented from reading illegal file!")

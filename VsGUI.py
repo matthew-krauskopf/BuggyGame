@@ -291,9 +291,12 @@ class VsGame(tk.Frame):
     def interpret_action(self, message):
         # Normal attack
         segments = message.split()
+        # Structure: [command, (bonus_option)] + [enemy_id]
         if segments[0] == "Normal":
-            if len(segments) == 2:
+            # Keyword was provided
+            if len(segments) == 3:
                 normal_attack(self, segments[1], False)
+            # No keyword was provided
             else:
                 normal_attack(self, "", False)
         # Spy on file
