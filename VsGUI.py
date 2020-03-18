@@ -1,6 +1,7 @@
 import tkinter as tk
 from Attacks import *
 from Improvements import *
+from Utils import change_permissions
 
 class VsGame(tk.Frame):
     def __init__(self, root=None, UserID=None, conn=None, is_host=True):
@@ -25,19 +26,19 @@ class VsGame(tk.Frame):
         self.health = 20
         self.enemy_health = 20
         # TODO set better value
-        self.energy = 99
+        self.energy = 5
         self.turn = 0
         self.gain_energy = 1
         # Set energy costs for attacks
         self.attack_energy = 1
         self.spy_energy = 3
         self.change_priv_energy = 5
-        self.DoS_energy = 10
+        self.DoS_energy = 20
         # Set energy costs for improvements
         self.patch_spy_cost = 5
         self.patch_priv_cost = 10
-        self.patch_DoS_cost = 20
-        self.repair_log_cost = 3
+        self.patch_DoS_cost = 30
+        self.repair_log_cost = 8
         self.reset_keyword_cost = 10
         # Set patching flags to emulate code patches
         self.permission_patch = False
@@ -338,3 +339,17 @@ class VsGame(tk.Frame):
         action = self.stack.pop() + " " + self.request_IDs.pop()
         # Execute action
         self.interpret_action(action)
+
+    def end_game(self):
+        # End the game gracefully
+        # Close socket
+        self.conn.close()
+        self.attack_button.configure(state="disabled")
+        self.improve_button.configure(state="disabled")
+        # Restore log file in case it is disabled
+        change_permissions("664")
+        # Print if winner or loser
+        if self.health > 0:
+            self.log_action("You win!")
+        else:
+            self.log_action("You lose...")

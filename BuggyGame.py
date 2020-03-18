@@ -44,7 +44,7 @@ def PlayGame(gui):
 
     # Launch application for both
     player_turn()
-    while gui.health > 0 or gui.enemy_health > 0:
+    while gui.health > 0 and gui.enemy_health > 0:
         # Host goes on odd turn, guest on even turns
         if gui.turn % 2 == 0:
             if gui.is_host:
@@ -60,6 +60,15 @@ def PlayGame(gui):
             else:
                 # I am guest, opponent's turn
                 enemy_turn()
+    # Game has ended
+    gui.end_game()
+    # Do busy work until user closes app
+    while True:
+        gui.mainloop()
+
+def on_quit():
+    # Exits program gracefully
+    exit()
 
 def main():
     # Sets up game and connects players
@@ -67,6 +76,8 @@ def main():
     UserID = GenerateUserID()
     is_host, port = GetRuntimeArgs()
     root = tk.Tk()
+    # Handle exiting program gracefully
+    root.protocol("WM_DELETE_WINDOW", on_quit)
     gui = VsGame(root, UserID, Connect(is_host, port), is_host)
     PlayGame(gui)
 
