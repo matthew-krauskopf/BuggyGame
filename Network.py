@@ -22,9 +22,9 @@ def client(port):
     s.setblocking(False)
     return s
 
-def send_action(conn, action):
+def send_action(gui, action):
     # Use $ as a message terminator
-    conn.send(bytearray(action+"$", "utf-8"))
+    gui.conn.send(bytearray(action+"#"+gui.ID+"$", "utf-8"))
 
 def send_message(conn, message):
     # Sending only a single message
@@ -52,21 +52,24 @@ def recv_action(gui):
             message = gui.conn.recv(4096).decode("utf-8")
             # Strip trailing whitespace
             message.strip()
-            print("Message received: ", message)
             # If multiple messaged were received, split them on $ terminator
             actions = message.split("$")
             for action in actions:
-                # Strip individual actions
-                a = action.strip()
+                # Strip individual actions and split action from ID
+                action = action.strip()
+                # Grab action and request ID
+                a, ID = action.split("#")
+                # Reject blank actions
                 if a != "":
                     # Keep receiving actions until "Done" is received
                     if a != "Done":
-                        print("Received ", a)
-                        gui.stack.append(a)
-                    # All messages received: time to execute top action
+                        # If DoS patch applied, check duplicate ID's
+                        if not gui.DoS_patch or not ID in gui.request_IDs:
+                            # Send attack and ID to request stack
+                            gui.stack.append(a)
+                            gui.request_IDs.append(ID)
+                        # All messages received: time to exit
                     else:
-                        print("My stack is this: ")
-                        print(gui.stack)
                         return
         # Nothing to receive yet: update GUI
         except:

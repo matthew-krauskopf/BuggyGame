@@ -3,9 +3,9 @@ from Network import send_action
 
 def improve_energy_gains(GUI):
     # Tell opponent improvements were made
-    send_action(GUI.conn, "Improve")
+    send_action(GUI, "Improve")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
     # Improve energy gained each turn
     GUI.gain_energy += 1
     GUI.log_action("Turnly energy gain increased from " + str(GUI.gain_energy-1) + " to " + str(GUI.gain_energy))
@@ -18,9 +18,9 @@ def improve_energy_gains(GUI):
 
 def repair_logging(GUI):
     # Tell opponent improvements were made
-    send_action(GUI.conn, "Improve")
+    send_action(GUI, "Improve")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
     # Restore write permission on log file
     change_permissions("u+w", GUI.ID, GUI.ID, GUI.permission_patch)
     GUI.log_action("Repaired logging!")
@@ -33,9 +33,9 @@ def repair_logging(GUI):
 
 def reset_keyword(GUI):
     # Tell opponent improvements were made
-    send_action(GUI.conn, "Improve")
+    send_action(GUI, "Improve")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
     # Reset keyword to mitigate potential leakage
     CreateKeyword()
     GUI.log_action("Keyword successfully reset")
@@ -48,9 +48,9 @@ def reset_keyword(GUI):
 
 def prevent_log_lockout(GUI):
     # Tell opponent improvements were made
-    send_action(GUI.conn, "Improve")
+    send_action(GUI, "Improve")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
     # Set flag that permissions have been patched
     GUI.permission_patch = True
     GUI.log_action("Patch successful: Will now check for requester ID")
@@ -63,9 +63,9 @@ def prevent_log_lockout(GUI):
 
 def prevent_file_leakage(GUI):
     # Tell opponent improvements were made
-    send_action(GUI.conn, "Improve")
+    send_action(GUI, "Improve")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
     # Set spy patch flag
     GUI.spy_patch = True
     GUI.log_action("Patch successful: Files outside of PublicFiles can no longer be seen")
@@ -73,6 +73,21 @@ def prevent_file_leakage(GUI):
     GUI.update_turn()
     # Update energy
     GUI.update_energy(GUI.patch_spy_cost)
+    # Close improvement window
+    GUI.sub_def.destroy()
+
+def prevent_DoS(GUI):
+    # Tell opponent improvements were made
+    send_action(GUI, "Improve")
+    # Send "Done" message
+    send_action(GUI, "Done")
+    # Set spy patch flag
+    GUI.DoS_patch = True
+    GUI.log_action("Patch successful: DoS attacks can no longer come from a single source")
+    # Update turn
+    GUI.update_turn()
+    # Update energy
+    GUI.update_energy(GUI.patch_DoS_cost)
     # Close improvement window
     GUI.sub_def.destroy()
 
@@ -86,13 +101,11 @@ def check_write():
         return False
 
 def skip_turn(GUI):
-    # Tell opponent improvements were made
-    send_action(GUI.conn, "Skip")
+    # Tell opponent not action was taken
+    send_action(GUI, "Skip")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
     # Log action
     GUI.log_action("Took no action...")
     # Update turn
     GUI.update_turn()
-    # Close improvement window
-    #GUI.sub_def.destroy()

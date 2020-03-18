@@ -25,7 +25,7 @@ class VsGame(tk.Frame):
         self.health = 20
         self.enemy_health = 20
         # TODO set better value
-        self.energy = 9
+        self.energy = 99
         self.turn = 0
         self.gain_energy = 1
         # Set energy costs for attacks
@@ -42,12 +42,15 @@ class VsGame(tk.Frame):
         # Set patching flags to emulate code patches
         self.permission_patch = False
         self.spy_patch = False
+        self.DoS_patch = False
         # Create labels and buttons
         self.pack(fill=tk.BOTH, expand=True)
         self.set_layout()
         self.log_action("Game is ready!", False)
         # Create action stack. Vulnerable to DoS
         self.stack = []
+        # Track request ID's in stack. Each value must be unique
+        self.request_IDs = []
         self.update_turn()
 
     def set_layout(self):
@@ -127,7 +130,6 @@ class VsGame(tk.Frame):
     def update_turn(self):
         # Set settings for enemy turn
         def enemy_turn():
-            print(str(self.turn) + " Enemy turn")
             # Disable action buttons
             self.attack_button.config(state="disabled")
             self.improve_button.config(state="disabled")
@@ -135,7 +137,6 @@ class VsGame(tk.Frame):
 
         def player_turn():
             # Enable action buttons
-            print(str(self.turn) + " My turn!")
             self.new_turn_energy()
             self.attack_button.config(state="normal")
             self.improve_button.config(state="normal")
@@ -254,7 +255,7 @@ class VsGame(tk.Frame):
         self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
                                             command= lambda: prevent_log_lockout(self), bg="#33ccff")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
-                                            command= lambda: self.log_action("Feature coming soon!", False), bg="#33ccff")
+                                            command= lambda: prevent_DoS(self), bg="#33ccff")
         self.sub_def_repair_log = tk.Button(self.sub_def, text="Repair logging output", font=self.font, width=25,
                                             command= lambda: repair_logging(self), bg="#33ccff")
         self.sub_def_reset_keyword = tk.Button(self.sub_def, text="Reset keyword", font=self.font, width=25,
@@ -307,15 +308,20 @@ class VsGame(tk.Frame):
             self.update_turn()
         # Skipped turn or was DoS'd
         elif segments[0] == "Skip":
-            if segments[1] != self.ID:
-                self.log_action("Unable to take action")
-                # Send "skip" message
-                send_action(self.conn, "Skip " + segments[1])
-                # Send "Done" message
-                send_action(self.conn, "Done")
+            # No DoS Patch
+            if not self.DoS_patch:
+                if segments[1] != self.ID:
+                    self.log_action("Unable to take action")
+                    # Send "skip" message
+                    send_action(self, "Skip " + segments[1])
+                    # Send "Done" message
+                    send_action(self, "Done")
+                else:
+                    # Opponent did not act: do nothing
+                    self.log_action("No action was taken")
+            # Prevented DoS attack
             else:
-                # Opponent did not act: do nothing
-                self.log_action("No action was taken")
+                self.log_action("Prevented DoS attempt!")
             # Update turn count
             self.update_turn()
         # Opponent improved their system
@@ -326,7 +332,6 @@ class VsGame(tk.Frame):
 
     def execute_queued_action(self):
         # Grab action from queue
-        action = self.stack.pop()
-        print("Popping action " + action)
+        action = self.stack.pop() + " " + self.request_IDs.pop()
         # Execute action
         self.interpret_action(action)

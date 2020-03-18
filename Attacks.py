@@ -6,9 +6,9 @@ def normal_attack(GUI, input_keyword, outgoing=True):
     # Attacker
     if outgoing:
         # Send attack to opponent
-        send_action(GUI.conn, "Normal " + input_keyword)
+        send_action(GUI, "Normal " + input_keyword)
         # Send "Done" message
-        send_action(GUI.conn, "Done")
+        send_action(GUI, "Done")
         # Receive damage dealt successfully
         damage = int(recv_message(GUI))
         # Subtract health from opponent
@@ -47,9 +47,9 @@ def attack_permissions(GUI, request_ID, outgoing=True):
     # Attacker
     if outgoing:
         # Send attack to opponent
-        send_action(GUI.conn, "Chmod " + str(GUI.ID))
+        send_action(GUI, "Chmod ")
         # Send "Done" message
-        send_action(GUI.conn, "Done")
+        send_action(GUI, "Done")
         # Wait for response
         info = recv_message(GUI)
         if info == "Success":
@@ -67,11 +67,11 @@ def attack_permissions(GUI, request_ID, outgoing=True):
         # Remove write permissions on log file to prevent victim from seeing log
         if change_permissions("u-w", request_ID, GUI.ID, GUI.permission_patch):
             # Send success
-            send_message(GUI.conn, "Success")
+            send_message(GUI, "Success")
             GUI.log_action("Enemy changed log file permissions!")
         # Report failure if log file permissions patched
         else:
-            send_message(GUI.conn, "Failure")
+            send_message(GUI, "Failure")
             GUI.log_action("Enemy failed to disable log file!")
         # Update turn count
         GUI.update_turn()
@@ -83,9 +83,9 @@ def peak_files(GUI, wanted_file, outgoing=True):
         if wanted_file == "":
             return
         # Send attack to opponent
-        send_action(GUI.conn, "Spy " + wanted_file)
+        send_action(GUI, "Spy ")
         # Send "Done" message
-        send_action(GUI.conn, "Done")
+        send_action(GUI, "Done")
         # Wait for response
         info = recv_message(GUI)
         # Display info in log window
@@ -118,11 +118,11 @@ def peak_files(GUI, wanted_file, outgoing=True):
 def DoS(GUI):
     # Flood enemy with 3 "skip turn" requests
     for z in range(3):
-        send_action(GUI.conn, "Skip " + GUI.ID)
+        send_action(GUI, "Skip ")
     # Tell enemy this was a DoS
-    send_action(GUI.conn, "DoS")
+    send_action(GUI, "DoS")
     # Send "Done" message
-    send_action(GUI.conn, "Done")
+    send_action(GUI, "Done")
      # Display info in log window
     GUI.log_action("Opponent has been DoS'd!")
     # Update turn count
