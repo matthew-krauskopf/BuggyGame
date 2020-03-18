@@ -262,14 +262,14 @@ class VsGame(tk.Frame):
                                             command= lambda: reset_keyword(self), bg="#33ccff")
 
         # Configure button states if enough energy is present
-        # Patch Spy energy
-        if self.energy < self.patch_spy_cost:
+        # Patch Spy energy. Also disable if patch already in place
+        if self.energy < self.patch_spy_cost or self.spy_patch:
             self.sub_def_spy.configure(state="disabled")
-        # Change privledge energy
-        if self.energy < self.patch_priv_cost:
+        # Change privledge energy. Also disable if patch already in place
+        if self.energy < self.patch_priv_cost or self.permission_patch:
             self.sub_def_priv.configure(state="disabled")
-        # DoS energy
-        if self.energy < self.patch_DoS_cost:
+        # DoS energy. Also disable if patch is already in place
+        if self.energy < self.patch_DoS_cost or self.DoS_patch:
             self.sub_def_DoS.configure(state="disabled")
         # Repair log energy. Also disable if file is writable already
         if self.energy < self.repair_log_cost or check_write():
@@ -278,7 +278,7 @@ class VsGame(tk.Frame):
         if self.energy < self.reset_keyword_cost:
             self.sub_def_reset_keyword.configure(state="disabled")
 
-        # Pack attack buttons
+        # Pack improve buttons
         self.sub_title.grid(row=1, column=1)
         self.sub_impv_energy.grid(row=2, column=1)
         self.sub_def_spy.grid(row=3, column=1)
