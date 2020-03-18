@@ -56,10 +56,15 @@ class VsGame(tk.Frame):
         self.request_IDs = []
         self.update_turn()
 
-    def on_quit(self):
+    def on_quit(self, my_exit=True):
         # Exit program gracefully
         # Check if conn exists before trying to close
         if self.conn:
+            # Tell opponent to end game early
+            if my_exit:
+                send_action(self, "Exit")
+                send_action(self, "Done")
+            # Close connection
             self.conn.close()
         # Destroy the root
         self.root.destroy()
@@ -373,6 +378,9 @@ class VsGame(tk.Frame):
                 self.log_action("Prevented DoS attempt!")
             # Update turn count
             self.update_turn()
+        # Opponent closed their game
+        elif segments[0] == "Exit":
+            self.on_quit(my_exit=False)
         # Opponent improved their system
         else:
             self.log_action("Enemy spent energy to improve system")
