@@ -20,7 +20,7 @@ def GetRuntimeArgs():
         exit()
     # No internet connect: debug against self
     elif len(argv) == 1:
-        return None, None
+        return True, None
     # Host/client, port
     else:
         return argv[1] == "host", int(argv[2])

@@ -199,8 +199,11 @@ class VsGame(tk.Frame):
         self.sub_atk.rowconfigure(4, pad=5)
         self.sub_atk.rowconfigure(5, pad=5)
 
-        # Create label for new menu
-        self.sub_title = tk.Label(self.sub_atk, text="Select Attack", font="arial 24 bold", width=20)
+        # Create label attacks
+        self.sub_attack_title = tk.Label(self.sub_atk, text="Select Attack", font="arial 24 bold", width=15)
+        # Create label attack costs
+        self.sub_attack_cost_title = tk.Label(self.sub_atk, text="Energy\nCosts", font="arial 20 bold", width=6)
+
         # Define attack buttons
         self.sub_normal_atk = tk.Button(self.sub_atk, text="Normal Attack", font=self.font, width=25,
                                             command= lambda: attack_input_menu("Use bonus keyword? \n(Leave blank if no)"), bg="red")
@@ -210,6 +213,12 @@ class VsGame(tk.Frame):
                                             command= lambda: attack_permissions(self, self.ID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
                                             command= lambda: DoS(self), bg="red")
+
+        # Labels for cost of each action
+        self.sub_normal_atk_cost = tk.Label(self.sub_atk, text=str(self.attack_energy), font=self.font, width=6, bg="#33ccff")
+        self.sub_spy_cost = tk.Label(self.sub_atk, text=str(self.spy_energy), font=self.font, width=6, bg="#33ccff")
+        self.sub_change_priv_cost = tk.Label(self.sub_atk, text=str(self.change_priv_energy), font=self.font, width=6, bg="#33ccff")
+        self.sub_DoS_cost = tk.Label(self.sub_atk, text=str(self.DoS_energy), font=self.font, width=6, bg="#33ccff")
 
         # Configure button states if enough energy is present
         # Normal attack energy
@@ -226,11 +235,18 @@ class VsGame(tk.Frame):
             self.sub_DoS.configure(state="disabled")
 
         # Pack attack buttons
-        self.sub_title.grid(row=1, column=1)
+        self.sub_attack_title.grid(row=1, column=1)
         self.sub_normal_atk.grid(row=2, column=1)
         self.sub_spy.grid(row=3, column=1)
         self.sub_change_priv.grid(row=4, column=1)
         self.sub_DoS.grid(row=5, column=1)
+
+        # Pack energy cost labels
+        self.sub_attack_cost_title.grid(row=1, column=2)
+        self.sub_normal_atk_cost.grid(row=2, column=2)
+        self.sub_spy_cost.grid(row=3, column=2)
+        self.sub_change_priv_cost.grid(row=4, column=2)
+        self.sub_DoS_cost.grid(row=5, column=2)
 
     def improve_menu(self):
         # Create attack sub menu
@@ -247,7 +263,9 @@ class VsGame(tk.Frame):
         self.sub_def.rowconfigure(6, pad=5)
 
         # Create label for new menu
-        self.sub_title = tk.Label(self.sub_def, text="Select Improvement", font="arial 24 bold", width=20)
+        self.sub_def_title = tk.Label(self.sub_def, text="Select\nImprovement", font="arial 24 bold", width=15)
+        # Create label attack costs
+        self.sub_def_cost_title = tk.Label(self.sub_def, text="Energy\nCosts", font="arial 20 bold", width=6)
         # Define attack buttons
         self.sub_impv_energy = tk.Button(self.sub_def, text="Improve energy gain", font=self.font, width=25,
                                             command= lambda: improve_energy_gains(self), bg="#33ccff")
@@ -261,6 +279,14 @@ class VsGame(tk.Frame):
                                             command= lambda: repair_logging(self), bg="#33ccff")
         self.sub_def_reset_keyword = tk.Button(self.sub_def, text="Reset keyword", font=self.font, width=25,
                                             command= lambda: reset_keyword(self), bg="#33ccff")
+
+        # Labels for the cost of each action
+        self.sub_impv_energy_cost = tk.Label(self.sub_def, text=str(self.gain_energy), font=self.font, width=6, bg="#33ccff")
+        self.sub_def_spy_cost = tk.Label(self.sub_def, text=str(self.patch_spy_cost), font=self.font, width=6, bg="#33ccff")
+        self.sub_def_priv_cost = tk.Label(self.sub_def, text=str(self.patch_priv_cost), font=self.font, width=6, bg="#33ccff")
+        self.sub_def_DoS_cost = tk.Label(self.sub_def, text=str(self.patch_DoS_cost), font=self.font, width=6, bg="#33ccff")
+        self.sub_def_repair_log_cost = tk.Label(self.sub_def, text=str(self.repair_log_cost), font=self.font, width=6, bg="#33ccff")
+        self.sub_def_reset_keyword_cost = tk.Label(self.sub_def, text=str(self.reset_keyword_cost), font=self.font, width=6, bg="#33ccff")
 
         # Configure button states if enough energy is present
         # Patch Spy energy. Also disable if patch already in place
@@ -280,13 +306,22 @@ class VsGame(tk.Frame):
             self.sub_def_reset_keyword.configure(state="disabled")
 
         # Pack improve buttons
-        self.sub_title.grid(row=1, column=1)
+        self.sub_def_title.grid(row=1, column=1)
         self.sub_impv_energy.grid(row=2, column=1)
         self.sub_def_spy.grid(row=3, column=1)
         self.sub_def_priv.grid(row=4, column=1)
         self.sub_def_DoS.grid(row=5, column=1)
         self.sub_def_repair_log.grid(row=6, column=1)
         self.sub_def_reset_keyword.grid(row=7, column=1)
+
+        # Pack energy cost labels
+        self.sub_def_cost_title.grid(row=1, column=2)
+        self.sub_impv_energy_cost.grid(row=2, column=2)
+        self.sub_def_spy_cost.grid(row=3, column=2)
+        self.sub_def_priv_cost.grid(row=4, column=2)
+        self.sub_def_DoS_cost.grid(row=5, column=2)
+        self.sub_def_repair_log_cost.grid(row=6, column=2)
+        self.sub_def_reset_keyword_cost.grid(row=7, column=2)
 
 
     def interpret_action(self, message):
