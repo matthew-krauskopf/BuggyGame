@@ -370,6 +370,8 @@ class VsGame(tk.Frame):
                     send_action(self, "Skip " + segments[1])
                     # Send "Done" message
                     send_action(self, "Done")
+                    # Update energy: costs what would have been gained this turn
+                    self.update_energy(self.gain_energy)
                 else:
                     # Opponent did not act: do nothing
                     self.log_action("No action was taken")
