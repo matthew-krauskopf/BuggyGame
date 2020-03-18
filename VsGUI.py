@@ -56,18 +56,21 @@ class VsGame(tk.Frame):
         self.request_IDs = []
         self.update_turn()
 
-    def on_quit(self, my_exit=True):
+    def on_quit(self):
         # Exit program gracefully
         # Check if conn exists before trying to close
-        if self.conn:
+        try:
             # Tell opponent to end game early
-            if my_exit:
-                send_action(self, "Exit")
-                send_action(self, "Done")
+            send_action(self, "Exit")
+            send_action(self, "Done")
             # Close connection
             self.conn.close()
+        # Socket already closed
+        except:
+            pass
         # Destroy the root
         self.root.destroy()
+        exit()
 
     def set_layout(self):
         # Layout columns and rows for GUI
@@ -382,7 +385,7 @@ class VsGame(tk.Frame):
             self.update_turn()
         # Opponent closed their game
         elif segments[0] == "Exit":
-            self.on_quit(my_exit=False)
+            self.on_quit()
         # Opponent improved their system
         else:
             self.log_action("Enemy spent energy to improve system")

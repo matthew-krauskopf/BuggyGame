@@ -1,24 +1,22 @@
 import socket
-HOST = '127.0.0.1'  # The server's hostname or IP address
 
 def host(port, ip):
     # Establish socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Turn off blocking sends
-    print(ip)
     s.bind((ip, port))
     # Listen to for client
     s.listen()
     conn, addr = s.accept()
+    # Turn off blocking sends
     conn.setblocking(False)
     print('Connection Successful')
     return conn
 
 def client(port, ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Turn off blocking sends
     s.connect((ip, port))
     print('Connection Successful')
+    # Turn off blocking sends
     s.setblocking(False)
     return s
 
@@ -40,9 +38,13 @@ def recv_message(gui):
             # Return message
             return message
         # Nothing to receive yet: update GUI
-        except:
+        except BlockingIOError:
             gui.update_idletasks()
             gui.update()
+        # Socket was destroyed: abort
+        else:
+            exit()
+
 
 def recv_action(gui):
     # Stay in loop until message is received
@@ -72,6 +74,9 @@ def recv_action(gui):
                     else:
                         return
         # Nothing to receive yet: update GUI
-        except:
+        except BlockingIOError:
             gui.update_idletasks()
             gui.update()
+        # Socket was destroyed: abort
+        else:
+            exit()
