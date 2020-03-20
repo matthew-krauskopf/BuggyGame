@@ -115,7 +115,7 @@ class VsGame(tk.Frame):
     def log_action(self, message, next_turn=True):
         # Have to set log state to normal to modify
         self.log.config(state="normal")
-        # Try catch for logging. Will error if privledges have been changed
+        # Try catch for logging. Will error if privileges have been changed
         try:
             log_file = open("PublicFiles/LogFile.txt", "a")
             # Show message without header if game is starting
@@ -129,7 +129,7 @@ class VsGame(tk.Frame):
                 self.log.insert(tk.END, "Turn " + str(self.turn) + ": " + message + "\n")
             log_file.close()
         except:
-            self.log.insert(tk.END, "Error! Cannot access log file. Reading privledges may have been abused\n")
+            self.log.insert(tk.END, "Error! Cannot access log file. Reading privileges may have been abused\n")
         # Disable ability to edit window
         self.log.config(state="disabled")
         # Autoscroll to bottom
@@ -227,7 +227,7 @@ class VsGame(tk.Frame):
                                             command= lambda: attack_input_menu("Use bonus keyword? \n(Leave blank if no)"), bg="red")
         self.sub_spy = tk.Button(self.sub_atk, text="Spy enemy files", font=self.font, width=25,
                                             command= lambda: attack_input_menu("Select File"), bg="red")
-        self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privledges", font=self.font, width=25,
+        self.sub_change_priv = tk.Button(self.sub_atk, text="Change enemy log privileges", font=self.font, width=25,
                                             command= lambda: attack_permissions(self, self.ID), bg="red")
         self.sub_DoS = tk.Button(self.sub_atk, text="Execute DoS", font=self.font, width=25,
                                             command= lambda: DoS(self), bg="red")
@@ -245,7 +245,7 @@ class VsGame(tk.Frame):
         # Spy energy
         if self.energy < self.spy_energy:
             self.sub_spy.configure(state="disabled")
-        # Change privledge energy
+        # Change privilege energy
         if self.energy < self.change_priv_energy:
             self.sub_change_priv.configure(state="disabled")
         # DoS energy
@@ -289,7 +289,7 @@ class VsGame(tk.Frame):
                                             command= lambda: improve_energy_gains(self), bg="#00e600")
         self.sub_def_spy = tk.Button(self.sub_def, text="Patch file leakage", font=self.font, width=25,
                                             command= lambda: prevent_file_leakage(self), bg="#00e600")
-        self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privledges", font=self.font, width=25,
+        self.sub_def_priv = tk.Button(self.sub_def, text="Patch file privileges", font=self.font, width=25,
                                             command= lambda: prevent_log_lockout(self), bg="#00e600")
         self.sub_def_DoS = tk.Button(self.sub_def, text="Patch DoS vulnerability", font=self.font, width=25,
                                             command= lambda: prevent_DoS(self), bg="#00e600")
@@ -310,7 +310,7 @@ class VsGame(tk.Frame):
         # Patch Spy energy. Also disable if patch already in place
         if self.energy < self.patch_spy_cost or self.spy_patch:
             self.sub_def_spy.configure(state="disabled")
-        # Change privledge energy. Also disable if patch already in place
+        # Change privilege energy. Also disable if patch already in place
         if self.energy < self.patch_priv_cost or self.permission_patch:
             self.sub_def_priv.configure(state="disabled")
         # DoS energy. Also disable if patch is already in place
