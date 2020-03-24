@@ -51,13 +51,14 @@ def GenerateUserID():
     return "".join(random.choice(string.ascii_lowercase) for z in range(10))
 
 def SetStartingFiles():
-    # Set starting files for game. Copy all files from StartFiles into InUseFiles
-    CreateKeyword()
+    # Set starting files for game.
     # Create folders if not present
     if not os.path.exists('PublicFiles/'):
         os.makedirs('PublicFiles/')
     if not os.path.exists('PrivateFiles/'):
         os.makedirs('PrivateFiles/')
+    # Set bonus damage keyword
+    CreateKeyword()
     # Set permissions of log file to ensure it is writable
     if os.path.exists("PublicFiles/LogFile.txt"):
         change_permissions("664", patch=False)
