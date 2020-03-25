@@ -2,17 +2,30 @@ import subprocess
 import random
 import string
 import os
+from platform import system
 
 def change_permissions(perm, request_ID=None, host_ID=None, patch=None):
+    # Change permission
+    def do_chmod():
+        if system() == "Linux":
+            # Check if add or remove write
+            if "+" in perm:
+                os.chmod("PublicFiles/LogFile.txt", 0o666)
+            else:
+                os.chmod("PublicFiles/LogFile.txt", 0o444)
+        # Windows
+        else:
+            subprocess.call(["chmod", perm, "PublicFiles/LogFile.txt"])
+
     if not patch:
         # No patch: allow chmod to happen without check
-        subprocess.call(["chmod", perm, "PublicFiles/LogFile.txt"])
+        do_chmod()
         return True
     else:
         # Patch: Check request ID
         if request_ID == host_ID:
             # Reject request if ID is not host
-            subprocess.call(["chmod", perm, "PublicFiles/LogFile.txt"])
+            do_chmod()
             return True
     return False
 
