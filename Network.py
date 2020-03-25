@@ -41,10 +41,6 @@ def recv_message(gui):
         except BlockingIOError:
             gui.update_idletasks()
             gui.update()
-        # Socket was destroyed: abort
-        else:
-            exit()
-
 
 def recv_action(gui):
     # Stay in loop until message is received
@@ -57,6 +53,9 @@ def recv_action(gui):
             # If multiple messaged were received, split them on $ terminator
             actions = message.split("$")
             for action in actions:
+                # Sanity check: skip if action = ""
+                if action == "":
+                    continue
                 # Strip individual actions and split action from ID
                 action = action.strip()
                 # Grab action and request ID
@@ -77,6 +76,3 @@ def recv_action(gui):
         except BlockingIOError:
             gui.update_idletasks()
             gui.update()
-        # Socket was destroyed: abort
-        else:
-            exit()
