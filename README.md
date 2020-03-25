@@ -2,7 +2,7 @@
 ### Written by: Matthew Krauskopf
 
 ## Description
-This python application is a game where two opposing players are given identical code bases. Each player has a health bar and an amount of energy.
+This python 3 application is a game where two opposing players are given identical code bases. Each player has a health bar and an amount of energy.
 The opponent's health bar is visible to the player, while the amount of energy each player has is hidden. At the beginning of each turn, the player gains
 1 energy, which can be increased under the improvements section. The goal of the game is to attack the opponent
 and drop their health bar to 0. The game ends once one player's health reaches 0. 
@@ -17,7 +17,7 @@ it is in the player's interest to make sure they patch their vulnerabilities as 
 
 ## How to play
 ```
-py BuggyGame.py [host|client] [port] [ip_address]
+python3 BuggyGame.py [host|client] [port] [ip_address]
 ```
 To start the game, one player must be the host, and one player must be the client. 
 
