@@ -28,7 +28,7 @@ class VsGame(tk.Frame):
         self.health = 20
         self.enemy_health = 20
         # TODO set better value
-        self.energy = 5
+        self.energy = 100
         self.turn = 0
         self.gain_energy = 1
         # Set energy costs for attacks

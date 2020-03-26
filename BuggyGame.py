@@ -24,7 +24,7 @@ def GetRuntimeArgs():
         return argv[1] == "host", int(argv[2]), argv[3]
     # Invalid usage
     else:
-        print("Invalid usage!\npy BuggyGame.py [host/client] [port] [ip_address]")
+        print("Invalid usage!\npython3.6 BuggyGame.py [host/client] [port] [ip_address]")
         exit()
 
 def update_game(gui):

@@ -17,7 +17,7 @@ it is in the player's interest to make sure they patch their vulnerabilities as 
 
 ## How to play
 ```
-python3 BuggyGame.py [host|client] [port] [ip_address]
+python3.6 BuggyGame.py [host|client] [port] [ip_address]
 ```
 To start the game, one player must be the host, and one player must be the client. 
 
